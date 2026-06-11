@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard — Aluno Sourcerer</title>
+</head>
+<body>
+    <h1>Olá, {{ user.username }}!</h1>
+    <p>Nível: {{ student_profile.level }}</p>
+    <p>Mana: {{ student_profile.mana }}</p>
+
+    <p><a href="{% url 'module_list' %}">Explorar Grimório</a></p>
+
+    <h2>Sua Guilda</h2>
+    {% if active_enrollments %}
+        {% for enrollment in active_enrollments %}
+            <p>{{ enrollment.guild.name }} (Código: {{ enrollment.guild.invite_code }})</p>
+        {% endfor %}
+    {% else %}
+        <p>Você ainda não está em nenhuma guilda.</p>
+        <form method="post" action="{% url 'join_guild' %}">
+            {% csrf_token %}
+            <input type="text" name="invite_code" placeholder="Código de convite" required>
+            <button type="submit">Entrar na Guilda</button>
+        </form>
+    {% endif %}
+
+    <a href="{% url 'logout' %}">Sair</a>
+</body>
+</html>

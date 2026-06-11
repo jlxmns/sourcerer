@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ challenge.title }} — Sourcerer</title>
+</head>
+<body>
+    <h1>{{ challenge.title }}</h1>
+    <p><strong>Módulo:</strong> {{ module.title }}</p>
+    <p><strong>Dificuldade:</strong> {{ challenge.get_difficulty_display }}</p>
+    <p><strong>Objetivo de aprendizagem:</strong> {{ challenge.learning_goal }}</p>
+    <p><strong>Mana ao concluir:</strong> {{ challenge.mana_reward }}</p>
+
+    {% if challenge.story_text %}
+        <h2>Narrativa</h2>
+        <p>{{ challenge.story_text }}</p>
+    {% endif %}
+
+    <h2>Descrição do desafio</h2>
+    <p>{{ challenge.description }}</p>
+
+    <p>Em breve: editor mágico de blocos.</p>
+
+    <a href="{% url 'module_detail' module.slug %}">Voltar ao módulo</a>
+</body>
+</html>

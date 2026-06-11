@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard — Professor Sourcerer</title>
+</head>
+<body>
+    <h1>Olá, Arquimago {{ user.username }}!</h1>
+
+    <p><a href="{% url 'module_list' %}">Ver módulos publicados</a></p>
+
+    <h2>Suas Guildas</h2>
+    {% if guilds %}
+        {% for guild in guilds %}
+            <p>{{ guild.name }} — Código: {{ guild.invite_code }}</p>
+            <p>Alunos: {{ guild.enrollments.count }}</p>
+        {% endfor %}
+    {% else %}
+        <p>Você ainda não criou nenhuma guilda.</p>
+    {% endif %}
+
+    <a href="{% url 'create_guild' %}">Criar Nova Guilda</a>
+    <a href="{% url 'logout' %}">Sair</a>
+</body>
+</html>

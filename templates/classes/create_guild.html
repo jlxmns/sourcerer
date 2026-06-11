@@ -1,0 +1,20 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Guilda — Sourcerer</title>
+</head>
+<body>
+    <h1>Criar Nova Guilda</h1>
+    <form method="post">
+        <label for="name">Nome da Guilda:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Descrição:</label>
+        <input type="text" id="description" name="description">
+
+        <button type="submit">Criar</button>
+    </form>
+
+    <a href="{% url 'dashboard' %}">Voltar ao Dashboard</a>
+</body>
+</html>
