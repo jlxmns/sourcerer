@@ -3,6 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ challenge.title }} — Sourcerer</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 24px;
+        }
+
+        #blocklyDiv {
+            height: 480px;
+            width: 100%;
+            border: 1px solid #ccc;
+            margin: 20px 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        button {
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 12px;
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ challenge.title }}</h1>
@@ -19,8 +50,111 @@
     <h2>Descrição do desafio</h2>
     <p>{{ challenge.description }}</p>
 
-    <p>Em breve: editor mágico de blocos.</p>
+    <h2>Editor Mágico de Blocos</h2>
 
-    <a href="{% url 'module_detail' module.slug %}">Voltar ao módulo</a>
+    <div id="blocklyDiv"></div>
+
+    <xml id="toolbox" style="display: none">
+        <category name="Lógica" colour="210">
+            <block type="controls_if"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_boolean"></block>
+        </category>
+
+        <category name="Laços" colour="120">
+            <block type="controls_repeat_ext">
+                <value name="TIMES">
+                    <shadow type="math_number">
+                        <field name="NUM">3</field>
+                    </shadow>
+                </value>
+            </block>
+        </category>
+
+        <category name="Matemática" colour="230">
+            <block type="math_number">
+                <field name="NUM">0</field>
+            </block>
+            <block type="math_arithmetic"></block>
+        </category>
+
+        <category name="Texto" colour="160">
+            <block type="text"></block>
+            <block type="text_print"></block>
+        </category>
+
+        <category name="Variáveis" colour="330" custom="VARIABLE"></category>
+    </xml>
+
+    <div class="actions">
+        <button id="saveBtn" type="button">Salvar tentativa</button>
+        <button id="generateCodeBtn" type="button">Gerar código</button>
+    </div>
+
+    <h2>Código gerado</h2>
+    <pre id="generatedCode"></pre>
+
+    <p><a href="{% url 'module_detail' module.slug %}">Voltar ao módulo</a></p>
+
+    {{ latest_attempt.workspace_state|json_script:"initial-workspace" }}
+
+    <script>
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: document.getElementById('toolbox')
+        });
+
+        const initialWorkspaceData = JSON.parse(
+            document.getElementById('initial-workspace').textContent || '{}'
+        );
+
+        if (initialWorkspaceData && Object.keys(initialWorkspaceData).length > 0) {
+            Blockly.serialization.workspaces.load(initialWorkspaceData, workspace);
+        }
+
+        const generatedCodeElement = document.getElementById('generatedCode');
+        const saveBtn = document.getElementById('saveBtn');
+        const generateCodeBtn = document.getElementById('generateCodeBtn');
+
+        generateCodeBtn.addEventListener('click', () => {
+            let code = '';
+
+            try {
+                if (Blockly.JavaScript) {
+                    code = Blockly.JavaScript.workspaceToCode(workspace);
+                } else {
+                    code = '// Gerador de código não carregado nesta versão.';
+                }
+            } catch (error) {
+                code = '// Erro ao gerar código: ' + error.message;
+            }
+
+            generatedCodeElement.textContent = code;
+        });
+
+        saveBtn.addEventListener('click', async () => {
+            const workspaceState = Blockly.serialization.workspaces.save(workspace);
+            const codeGenerated = generatedCodeElement.textContent;
+
+            const response = await fetch("{% url 'save_attempt' challenge.id %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({
+                    workspace_state: workspaceState,
+                    code_generated: codeGenerated
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Tentativa salva com sucesso!');
+            } else {
+                alert('Erro ao salvar tentativa: ' + result.error);
+            }
+        });
+    </script>
 </body>
 </html>

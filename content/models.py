@@ -38,7 +38,11 @@ class Challenge(TimeStampedModel):
     description = models.TextField()
     story_text = models.TextField(blank=True)
     learning_goal = models.CharField(max_length=255)
-    difficulty = models.CharField(max_length=10, choices=Difficulty.choices, default=Difficulty.EASY)
+    difficulty = models.CharField(
+        max_length=10,
+        choices=Difficulty.choices,
+        default=Difficulty.EASY,
+    )
     order = models.PositiveIntegerField(default=1)
     mana_reward = models.PositiveIntegerField(default=10)
     is_published = models.BooleanField(default=True)
@@ -49,3 +53,26 @@ class Challenge(TimeStampedModel):
 
     def __str__(self):
         return f'{self.module.title} - {self.title}'
+
+
+class ChallengeAttempt(TimeStampedModel):
+    student = models.ForeignKey(
+        'accounts.StudentProfile',
+        on_delete=models.CASCADE,
+        related_name='challenge_attempts',
+    )
+    challenge = models.ForeignKey(
+        Challenge,
+        on_delete=models.CASCADE,
+        related_name='attempts',
+    )
+    workspace_state = models.JSONField(default=dict, blank=True)
+    code_generated = models.TextField(blank=True)
+    is_completed = models.BooleanField(default=False)
+    score = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.student.user.username} - {self.challenge.title} ({self.created_at:%d/%m/%Y %H:%M})'
