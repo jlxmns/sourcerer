@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ guild.name }}{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>{{ guild.name }}</h1>
+        <p>Código de entrada: <strong>{{ guild.join_code }}</strong></p>
+        <p>Total de alunos: {{ student_count }}</p>
+
+        <article>
+            <h2>Progresso dos Alunos</h2>
+            {% if students_data %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Nível</th>
+                            <th>Mana</th>
+                            <th>Feitiços Completados</th>
+                            <th>Grimórios Completados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in students_data %}
+                            <tr>
+                                <td>{{ data.student.user.get_full_name|default:data.student.user.username }}</td>
+                                <td>{{ data.student.level }}</td>
+                                <td>{{ data.student.mana }}</td>
+                                <td>{{ data.total_completions }}</td>
+                                <td>{{ data.grimoires_completed }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Nenhum aluno nesta guilda ainda.</p>
+            {% endif %}
+        </article>
+
+        <nav>
+            <a href="{% url 'classes:guild_ranking' guild.pk %}">Ver Ranking</a>
+            <a href="{% url 'classes:guild_foe' guild.pk %}">Ver Poderoso Inimigo</a>
+            <a href="{% url 'dashboard:teacher_dashboard' %}">Voltar</a>
+        </nav>
+    </section>
+{% endblock %}

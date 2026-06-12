@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sourcerer — Criar Conta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+  <div class="login-container">
+
+    {# ─── Left panel — decorative hero ─── #}
+    <div class="login-hero register-hero">
+      <div class="login-hero__bg"></div>
+      <div class="register-hero__glow-1"></div>
+      <div class="register-hero__glow-2"></div>
+
+      {# Particle dots #}
+      <div class="register-hero__particle" style="top:15%;left:10%"></div>
+      <div class="register-hero__particle" style="top:25%;left:35%"></div>
+      <div class="register-hero__particle" style="top:35%;left:60%"></div>
+      <div class="register-hero__particle" style="top:45%;left:15%"></div>
+      <div class="register-hero__particle" style="top:55%;left:40%"></div>
+      <div class="register-hero__particle" style="top:65%;left:65%"></div>
+      <div class="register-hero__particle" style="top:75%;left:20%"></div>
+      <div class="register-hero__particle" style="top:85%;left:50%"></div>
+
+      <div class="login-hero__content">
+        <div class="login-hero__logo" aria-hidden="true">🧙</div>
+        <h1 class="login-hero__title">Sourcerer</h1>
+        <p class="login-hero__subtitle">
+          Junte-se a milhares de estudantes que aprendem programação através da magia.
+        </p>
+
+        <div class="register-hero__features">
+          <div class="register-hero__feature">
+            <span class="register-hero__feature-icon" aria-hidden="true">🎓</span>
+            <div>
+              <p class="register-hero__feature-title">Aprenda enquanto joga</p>
+              <p class="register-hero__feature-desc">Exercícios transformados em feitiços</p>
+            </div>
+          </div>
+          <div class="register-hero__feature">
+            <span class="register-hero__feature-icon" aria-hidden="true">🏆</span>
+            <div>
+              <p class="register-hero__feature-title">Compete com sua turma</p>
+              <p class="register-hero__feature-desc">Rankings, badges e recompensas</p>
+            </div>
+          </div>
+          <div class="register-hero__feature">
+            <span class="register-hero__feature-icon" aria-hidden="true">🔮</span>
+            <div>
+              <p class="register-hero__feature-title">Progresso real</p>
+              <p class="register-hero__feature-desc">Pensamento computacional de verdade</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ─── Right panel — form ─── #}
+    <div class="login-form-panel">
+      <div class="login-form">
+
+        <div class="login-form__mobile-header">
+          <div class="login-form__mobile-logo" aria-hidden="true">🧙</div>
+          <span class="login-form__mobile-name">Sourcerer</span>
+        </div>
+
+        <h2 class="login-form__heading">Criar sua conta</h2>
+        <p class="login-form__subheading">
+          Preencha seus dados para começar a jornada.
+        </p>
+
+        <form method="post" action="{% url 'register' %}">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="form-errors">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          {# Nome completo #}
+          <div class="form-group">
+            <label class="form-group__label" for="{{ form.nome_completo.id_for_label }}">
+              Nome completo
+            </label>
+            <div class="input-wrapper">
+              <span class="input-wrapper__icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                name="{{ form.nome_completo.html_name }}"
+                id="{{ form.nome_completo.id_for_label }}"
+                placeholder="Seu nome"
+                autocomplete="name"
+                class="form-input{% if form.nome_completo.errors %} form-input--error{% endif %}"
+                value="{{ form.nome_completo.value|default:'' }}"
+              >
+            </div>
+            {% if form.nome_completo.errors %}
+              <div class="field-error">{{ form.nome_completo.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          {# E-mail #}
+          <div class="form-group">
+            <label class="form-group__label" for="{{ form.email.id_for_label }}">
+              E-mail
+            </label>
+            <div class="input-wrapper">
+              <span class="input-wrapper__icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="M22 4L12 13L2 4"/>
+                </svg>
+              </span>
+              <input
+                type="email"
+                name="{{ form.email.html_name }}"
+                id="{{ form.email.id_for_label }}"
+                placeholder="seu@email.com"
+                autocomplete="email"
+                class="form-input{% if form.email.errors %} form-input--error{% endif %}"
+                value="{{ form.email.value|default:'' }}"
+              >
+            </div>
+            {% if form.email.errors %}
+              <div class="field-error">{{ form.email.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          {# Senha #}
+          <div class="form-group"
+               x-data="{
+                 password: '',
+                 get score() {
+                   let s = 0;
+                   if (this.password.length >= 8) s++;
+                   if (/[a-z]/.test(this.password)) s++;
+                   if (/[A-Z]/.test(this.password)) s++;
+                   if (/[0-9]/.test(this.password)) s++;
+                   if (/[^a-zA-Z0-9]/.test(this.password)) s++;
+                   return Math.min(s, 4);
+                 },
+                 get label() {
+                   if (!this.password) return '';
+                   return ['', 'Fraca', 'Moderada', 'Forte', 'Muito forte'][this.score];
+                 },
+               }">
+            <label class="form-group__label" for="{{ form.password.id_for_label }}">
+              Senha
+            </label>
+            <div class="input-wrapper">
+              <span class="input-wrapper__icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="11" width="14" height="10" rx="2"/>
+                  <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
+                  <path d="M8 11V7a4 4 0 1 1 8 0v4"/>
+                </svg>
+              </span>
+              <input
+                type="password"
+                name="{{ form.password.html_name }}"
+                id="{{ form.password.id_for_label }}"
+                placeholder="Crie uma senha segura"
+                autocomplete="new-password"
+                x-model="password"
+                class="form-input form-input--password{% if form.password.errors %} form-input--error{% endif %}"
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                onclick="togglePassword()"
+                aria-label="Mostrar ou esconder senha"
+              >
+                <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            {% if form.password.errors %}
+              <div class="field-error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+
+            {# Password strength indicator #}
+            <div class="password-strength"
+                 :class="score > 0 ? 'password-strength--score-' + score : ''">
+              <template x-for="i in 4" :key="i">
+                <div
+                  class="password-strength__bar"
+                  :class="i <= score ? 'password-strength__bar--active' : 'password-strength__bar--inactive'"
+                ></div>
+              </template>
+            </div>
+            <p class="password-strength__label" x-show="password" x-text="label"></p>
+          </div>
+
+          {# Terms checkbox #}
+          <label class="terms-checkbox">
+            <input type="checkbox" name="terms" id="id_terms" required>
+            <span class="terms-checkbox__text">
+              Concordo com os
+              <a href="#" class="terms-checkbox__link">Termos de Uso</a>
+              e a
+              <a href="#" class="terms-checkbox__link">Política de Privacidade</a>
+            </span>
+          </label>
+
+          {# Submit #}
+          <button type="submit" class="btn-submit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2l1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5z"/>
+              <path d="M18 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
+            </svg>
+            Criar Conta
+          </button>
+        </form>
+
+        <p class="signup-link">
+          Já tem uma conta?
+          <a href="{% url 'login' %}">Entrar</a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function togglePassword() {
+      var input = document.getElementById('{{ form.password.id_for_label }}');
+      var icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = [
+          '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>',
+          '<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>',
+          '<line x1="1" y1="1" x2="23" y2="23"/>'
+        ].join('');
+      } else {
+        input.type = 'password';
+        icon.innerHTML = [
+          '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>',
+          '<circle cx="12" cy="12" r="3"/>'
+        ].join('');
+      }
+    }
+  </script>
+</body>
+</html>

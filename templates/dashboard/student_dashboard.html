@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Painel{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/student.css' %}">
+{% endblock %}
+
+{% block body_class %}student-page{% endblock %}
+
+{% block content %}
+  {% include 'components/student_header.html' %}
+
+  <div class="student-layout">
+    <div class="student-layout__sidebar">
+      {% include 'components/student_sidebar.html' %}
+    </div>
+
+    <main class="student-layout__main">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="form-errors" style="margin-bottom:1rem;{% if message.tags == 'success' %}background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#86efac{% endif %}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="student-home__greeting">
+        <h1 class="student-home__greeting-title">Olá, {{ request.user.first_name|default:request.user.username }}! ✨</h1>
+        {% if pending_spells > 0 %}
+          <p class="student-home__greeting-sub">
+            Você tem <span class="student-home__greeting-highlight">{{ pending_spells }} feitiço{{ pending_spells|pluralize:"s" }}</span> pendente{{ pending_spells|pluralize:"s" }}. Continue sua jornada!
+          </p>
+        {% else %}
+          <p class="student-home__greeting-sub">Todos os feitiços disponíveis foram completados. Parabéns!</p>
+        {% endif %}
+      </div>
+
+      <div class="student-home__grid-header">
+        <h2 class="student-home__grid-title">Meus Grimórios</h2>
+        <span class="student-home__grid-count">{{ completed_grimoires }} de {{ total_grimoires }} concluídos</span>
+      </div>
+
+      <div class="grimorio-grid">
+        {% for data in grimoires_data %}
+          {% with g=data.grimoire %}
+            <div class="grimorio-card{% if data.status == 'blocked' %} grimorio-card--blocked{% elif data.status == 'completed' %} grimorio-card--completed{% endif %}">
+              {% if data.status != 'blocked' %}
+                <a href="{% url 'content:grimoire_detail' g.pk %}" class="grimorio-card__link">
+              {% endif %}
+
+                <div class="grimorio-card__header">
+                  <div class="grimorio-card__icon{% if data.status == 'blocked' %} grimorio-card__icon--locked{% endif %}">
+                    {% if data.status == 'blocked' %}
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    {% else %}
+                      {{ g.title|first }}
+                    {% endif %}
+                  </div>
+                  <div class="grimorio-card__info">
+                    <h3 class="grimorio-card__title">{{ g.title }}</h3>
+                    <div class="grimorio-card__tags">
+                      {% if data.status == 'completed' %}
+                        <span class="grimorio-card__tag grimorio-card__tag--green">✓ Concluído</span>
+                      {% elif data.status == 'blocked' %}
+                        <span class="grimorio-card__tag grimorio-card__tag--gray">🔒 Bloqueado</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <p class="grimorio-card__description">{{ g.description }}</p>
+
+                {% if data.total > 0 %}
+                  <div class="grimorio-card__progress">
+                    <div class="grimorio-card__progress-bar">
+                      <div class="grimorio-card__progress-fill{% if data.status == 'completed' %} grimorio-card__progress-fill--green{% endif %}" style="width:{{ data.progress }}%"></div>
+                    </div>
+                    <div class="grimorio-card__progress-label">
+                      <span>{{ data.completed }}/{{ data.total }} feitiços</span>
+                      {% if data.status != 'blocked' %}
+                        <span>{{ data.progress }}%</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                <div class="grimorio-card__footer">
+                  <div class="grimorio-card__xp">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>{{ data.earned_xp }} / {{ data.total_xp }} XP</span>
+                  </div>
+                  {% if data.status != 'blocked' %}
+                    <span class="grimorio-card__action">
+                      {% if data.status == 'completed' %}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        Rever
+                      {% elif data.status == 'in_progress' %}
+                        Continuar
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                      {% else %}
+                        Começar
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                </div>
+
+                {% if data.status == 'blocked' and data.unlock_requirements %}
+                  <div class="grimorio-card__blocked-hint">
+                    Complete primeiro: {{ data.unlock_requirements|join:", " }}
+                  </div>
+                {% endif %}
+
+              {% if data.status != 'blocked' %}
+                </a>
+              {% endif %}
+            </div>
+          {% endwith %}
+        {% empty %}
+          <p class="grimorio-grid__empty">Nenhum grimório disponível ainda.</p>
+        {% endfor %}
+      </div>
+    </main>
+  </div>
+{% endblock %}

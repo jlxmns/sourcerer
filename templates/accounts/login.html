@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sourcerer — Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+  <div class="login-container">
+
+    {# ─── Left panel — decorative hero ─── #}
+    <div class="login-hero">
+      <div class="login-hero__bg"></div>
+      <div class="login-hero__glow-1"></div>
+      <div class="login-hero__glow-2"></div>
+
+      <div class="login-hero__rune login-hero__rune--1">ᚠ</div>
+      <div class="login-hero__rune login-hero__rune--2">ᚢ</div>
+      <div class="login-hero__rune login-hero__rune--3">ᚱ</div>
+      <div class="login-hero__rune login-hero__rune--4">ᚦ</div>
+
+      <div class="login-hero__magic-circle">
+        <svg width="500" height="500" viewBox="0 0 500 500" fill="none" aria-hidden="true">
+          <circle cx="250" cy="250" r="220" stroke="#7c3aed" stroke-width="1" />
+          <circle cx="250" cy="250" r="180" stroke="#7c3aed" stroke-width="0.5" stroke-dasharray="4 8" />
+          <circle cx="250" cy="250" r="140" stroke="#06b6d4" stroke-width="0.5" />
+          <polygon points="250,50 460,370 40,370" stroke="#7c3aed" stroke-width="0.5" />
+          <polygon points="250,450 40,130 460,130" stroke="#7c3aed" stroke-width="0.5" />
+        </svg>
+      </div>
+
+      <div class="login-hero__content">
+        <div class="login-hero__logo" aria-hidden="true">🧙</div>
+        <h1 class="login-hero__title">Sourcerer</h1>
+        <p class="login-hero__subtitle">
+          A plataforma de pensamento computacional que transforma código em magia.
+        </p>
+
+        <div class="login-hero__features">
+          <div class="login-hero__feature">
+            <span class="login-hero__feature-icon" aria-hidden="true">📚</span>
+            <span class="login-hero__feature-label">Grimórios de aprendizado</span>
+          </div>
+          <div class="login-hero__feature">
+            <span class="login-hero__feature-icon" aria-hidden="true">✨</span>
+            <span class="login-hero__feature-label">Feitiços de código</span>
+          </div>
+          <div class="login-hero__feature">
+            <span class="login-hero__feature-icon" aria-hidden="true">🏆</span>
+            <span class="login-hero__feature-label">Competição e ranking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ─── Right panel — form ─── #}
+    <div class="login-form-panel">
+      <div class="login-form">
+
+        <div class="login-form__mobile-header">
+          <div class="login-form__mobile-logo" aria-hidden="true">🧙</div>
+          <span class="login-form__mobile-name">Sourcerer</span>
+        </div>
+
+        <h2 class="login-form__heading">Bem-vindo de volta</h2>
+        <p class="login-form__subheading">
+          Entre na sua conta para continuar sua jornada arcana.
+        </p>
+
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="form-errors">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          {# E-mail field #}
+          <div class="form-group">
+            <label class="form-group__label" for="{{ form.username.id_for_label }}">
+              E-mail
+            </label>
+            <div class="input-wrapper">
+              <span class="input-wrapper__icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="M22 4L12 13L2 4"/>
+                </svg>
+              </span>
+              <input
+                type="email"
+                name="{{ form.username.html_name }}"
+                id="{{ form.username.id_for_label }}"
+                placeholder="seu@email.com"
+                autocomplete="email"
+                class="form-input{% if form.username.errors %} form-input--error{% endif %}"
+                value="{{ form.username.value|default:'' }}"
+              >
+            </div>
+            {% if form.username.errors %}
+              <div class="field-error">{{ form.username.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          {# Password field #}
+          <div class="form-group">
+            <label class="form-group__label" for="{{ form.password.id_for_label }}">
+              Senha
+            </label>
+            <div class="input-wrapper">
+              <span class="input-wrapper__icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="11" width="14" height="10" rx="2"/>
+                  <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
+                  <path d="M8 11V7a4 4 0 1 1 8 0v4"/>
+                </svg>
+              </span>
+              <input
+                type="password"
+                name="{{ form.password.html_name }}"
+                id="{{ form.password.id_for_label }}"
+                placeholder="Sua senha secreta"
+                autocomplete="current-password"
+                class="form-input form-input--password{% if form.password.errors %} form-input--error{% endif %}"
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                onclick="togglePassword()"
+                aria-label="Mostrar ou esconder senha"
+              >
+                <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            {% if form.password.errors %}
+              <div class="field-error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          {# Options row #}
+          <div class="form-options">
+            <label class="checkbox-label">
+              <input type="checkbox" name="remember" id="id_remember">
+              Lembrar de mim
+            </label>
+            <a href="#" class="forgot-link">Esqueci a senha</a>
+          </div>
+
+          {# Submit #}
+          <button type="submit" class="btn-submit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2l1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5z"/>
+              <path d="M18 14l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
+            </svg>
+            Entrar
+          </button>
+        </form>
+
+        <p class="signup-link">
+          Ainda não tem conta?
+          <a href="{% url 'register' %}">Criar conta</a>
+        </p>
+
+        <footer class="login-footer">
+          <p class="login-footer__text">
+            Sourcerer — Plataforma educacional para escolas públicas brasileiras
+          </p>
+        </footer>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function togglePassword() {
+      var input = document.getElementById('{{ form.password.id_for_label }}');
+      var icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = [
+          '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>',
+          '<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>',
+          '<line x1="1" y1="1" x2="23" y2="23"/>'
+        ].join('');
+      } else {
+        input.type = 'password';
+        icon.innerHTML = [
+          '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>',
+          '<circle cx="12" cy="12" r="3"/>'
+        ].join('');
+      }
+    }
+  </script>
+</body>
+</html>

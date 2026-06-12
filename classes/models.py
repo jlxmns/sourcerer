@@ -1,47 +1,115 @@
 from django.db import models
 from django.utils.crypto import get_random_string
-from accounts.models import User, StudentProfile, TeacherProfile
+
 from core.models import TimeStampedModel
 
-class SchoolClass(TimeStampedModel):
-    """
-    Turma criada pelo professor.
-    """
-    teacher = models.ForeignKey(TeacherProfile, on_delete=models.CASCADE, related_name='guilds')
-    name = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
-    invite_code = models.CharField(max_length=8, unique=True)
 
-    def __str__(self):
-        return f"{self.name} ({self.teacher.user.username})"
+class Guild(models.Model):
+    name = models.CharField(max_length=200)
+    join_code = models.SlugField(
+        max_length=10, unique=True,
+        help_text='Código para alunos entrarem na guilda'
+    )
+    head_teacher = models.ForeignKey(
+        'accounts.TeacherProfile',
+        on_delete=models.CASCADE,
+        related_name='headed_guilds'
+    )
 
-    @classmethod
-    def generate_invite_code(cls):
-        """Gera um código único de 8 caracteres."""
-        while True:
-            code = get_random_string(length=8, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-            if not cls.objects.filter(invite_code=code).exists():
-                return code
+    class Meta:
+        verbose_name = 'Guilda'
+        verbose_name_plural = 'Guildas'
 
     def save(self, *args, **kwargs):
-        if not self.invite_code:
-            self.invite_code = self.generate_invite_code()
+        if not self.join_code:
+            self.join_code = get_random_string(length=8).upper()
         super().save(*args, **kwargs)
 
+    def student_count(self):
+        return self.memberships.count()
 
-class Enrollment(TimeStampedModel):
-    """Matrícula de aluno em uma turma."""
-    student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name='enrollments'
-    )
-    guild = models.ForeignKey(
-        SchoolClass,
-        on_delete=models.CASCADE,
-        related_name='enrollments'
-    )
-    is_active = models.BooleanField(default=True)
+    def current_foe(self):
+        return self.foe_progresses.filter(defeated=False).select_related('foe').first()
+
+    def ranking(self):
+        from accounts.models import StudentProfile
+        return StudentProfile.objects.filter(
+            guild_memberships__guild=self
+        ).order_by('-mana')
 
     def __str__(self):
-        return f"{self.student.user.username} in {self.guild.name}"
+        return self.name
+
+
+class GuildMembership(TimeStampedModel):
+    student = models.ForeignKey(
+        'accounts.StudentProfile',
+        on_delete=models.CASCADE,
+        related_name='guild_memberships'
+    )
+    guild = models.ForeignKey(
+        Guild, on_delete=models.CASCADE, related_name='memberships'
+    )
+
+    class Meta:
+        verbose_name = 'Membro da Guilda'
+        verbose_name_plural = 'Membros da Guilda'
+        unique_together = ('student', 'guild')
+
+    def __str__(self):
+        return f"{self.student.user.username} - {self.guild.name}"
+
+
+class PowerfulFoe(models.Model):
+    name = models.CharField(max_length=100)
+    hp = models.PositiveIntegerField(
+        help_text='HP base do inimigo. Mana necessário = hp * número de alunos da guilda'
+    )
+    image = models.ImageField(upload_to='foes/', blank=True)
+    description = models.TextField(blank=True)
+    order = models.PositiveIntegerField(
+        unique=True, help_text='Ordem de aparição (menor = enfrentado primeiro)'
+    )
+
+    class Meta:
+        verbose_name = 'Poderoso Inimigo'
+        verbose_name_plural = 'Poderosos Inimigos'
+        ordering = ('order',)
+
+    def mana_required(self, num_students: int) -> int:
+        return self.hp * num_students
+
+    def __str__(self):
+        return self.name
+
+
+class GuildFoeProgress(models.Model):
+    guild = models.ForeignKey(
+        Guild, on_delete=models.CASCADE, related_name='foe_progresses'
+    )
+    foe = models.ForeignKey(
+        PowerfulFoe, on_delete=models.CASCADE, related_name='guild_progresses'
+    )
+    defeated = models.BooleanField(default=False)
+    defeated_at = models.DateTimeField(null=True, blank=True)
+    total_mana_contributed = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Progresso contra Inimigo'
+        verbose_name_plural = 'Progressos contra Inimigos'
+        unique_together = ('guild', 'foe')
+
+    def mana_remaining(self) -> int:
+        if self.defeated:
+            return 0
+        required = self.foe.mana_required(self.guild.student_count())
+        return max(0, required - self.total_mana_contributed)
+
+    def progress_percent(self) -> float:
+        required = self.foe.mana_required(self.guild.student_count())
+        if required == 0:
+            return 100.0
+        return min(100.0, (self.total_mana_contributed / required) * 100)
+
+    def __str__(self):
+        return f"{self.guild.name} vs {self.foe.name}"

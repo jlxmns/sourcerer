@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ spell.title }}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/student.css' %}">
+{% endblock %}
+
+{% block body_class %}student-page{% endblock %}
+
+{% block content %}
+  {% include 'components/student_header.html' %}
+
+  <div class="student-layout">
+    <div class="student-layout__sidebar">
+      {% include 'components/student_sidebar.html' %}
+    </div>
+
+    <main class="student-layout__main">
+      <nav style="margin-bottom:1rem">
+        <a href="{% url 'content:grimoire_detail' spell.grimoire.pk %}" style="font-size:0.8125rem;color:#8b7db8;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#c4b5fd'" onmouseout="this.style.color='#8b7db8'">← Voltar para o Grimório</a>
+      </nav>
+
+      <h1 style="font-family:'Cinzel',serif;font-size:1.5rem;color:#e8e0f8;margin-bottom:0.5rem">{{ spell.title }}</h1>
+      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;font-size:0.875rem">
+        <span style="color:#8b7db8">Dificuldade: <strong style="color:#c4b5fd">{{ spell.get_difficulty_display }}</strong></span>
+        <span style="color:#8b7db8">Mana: <strong style="color:#67e8f9">+{{ spell.mana_reward }}</strong></span>
+      </div>
+
+      <section style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem;margin-bottom:1.5rem">
+        <h2 style="font-family:'Cinzel',serif;font-size:1rem;color:#e8e0f8;margin-bottom:0.75rem">Descrição</h2>
+        <div style="font-size:0.875rem;color:#c4b5fd;line-height:1.625">{{ spell.description|linebreaks }}</div>
+      </section>
+
+      {% if completion %}
+        <div style="background:#16112e;border:1px solid rgba(34,197,94,0.3);border-radius:0.75rem;padding:1.5rem;text-align:center">
+          <div style="font-size:2rem;margin-bottom:0.5rem">✅</div>
+          <p style="color:#86efac;font-weight:600;margin-bottom:0.25rem">Feitiço completado!</p>
+          <p style="font-size:0.8125rem;color:#8b7db8">Você já domina este feitiço.</p>
+        </div>
+      {% else %}
+        <section style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem">
+          <h2 style="font-family:'Cinzel',serif;font-size:1rem;color:#e8e0f8;margin-bottom:0.75rem">Resolver</h2>
+          <p style="font-size:0.8125rem;color:#8b7db8;margin-bottom:1rem">Monte sua solução e envie abaixo.</p>
+          <form id="spell-form" method="post" action="{% url 'content:spell_submit' spell.pk %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="form-group__label" for="code">Código</label>
+              <div class="input-wrapper">
+                <textarea id="code" name="code" rows="10" class="form-input" style="padding-left:0.75rem;font-family:'Courier New',monospace;resize:vertical" placeholder="Insira seu código Blockly aqui..."></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit" style="max-width:16rem">
+              Enviar Solução
+            </button>
+          </form>
+        </section>
+      {% endif %}
+    </main>
+  </div>
+{% endblock %}

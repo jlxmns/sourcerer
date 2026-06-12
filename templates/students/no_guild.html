@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sem Turma{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/student.css' %}">
+{% endblock %}
+
+{% block body_class %}student-page{% endblock %}
+
+{% block content %}
+  {% include 'components/student_header.html' %}
+
+  <div class="student-layout">
+    <div class="student-layout__sidebar">
+      {% include 'components/student_sidebar.html' %}
+    </div>
+
+    <main class="student-layout__main no-guild">
+      <div class="no-guild__illustration">
+        <div class="no-guild__glow"></div>
+        <svg class="no-guild__circle" width="220" height="220" viewBox="0 0 220 220" fill="none">
+          <circle cx="110" cy="110" r="100" stroke="#7c3aed" stroke-width="1" stroke-dasharray="6 10" opacity="0.2"/>
+          <circle cx="110" cy="110" r="75" stroke="#06b6d4" stroke-width="0.5" opacity="0.2"/>
+          <polygon points="110,20 195,170 25,170" stroke="#7c3aed" stroke-width="0.5" opacity="0.2"/>
+        </svg>
+        <div class="no-guild__icon-box">📜</div>
+      </div>
+
+      <h1 class="no-guild__title">Sua jornada começa aqui</h1>
+      <p class="no-guild__text">
+        Você ainda não faz parte de nenhuma turma. Aguarde um professor adicionar você ou insira um código de turma para começar sua aventura arcana.
+      </p>
+
+      <div class="no-guild__card no-guild__card--glow">
+        <div class="no-guild__card-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+          <span>Entrar com código de turma</span>
+        </div>
+        <form class="no-guild__code-form"
+              hx-post="{% url 'classes:join_guild' %}"
+              hx-target="body"
+              hx-swap="outerHTML"
+              hx-push-url="true">
+          {% csrf_token %}
+          <div class="no-guild__code-input-wrap">
+            <input type="text"
+                   name="code"
+                   class="no-guild__code-input"
+                   placeholder="Ex.: MAGIA-7A-2024"
+                   maxlength="16"
+                   required
+                   style="font-family:'Courier New',monospace;letter-spacing:0.08em">
+          </div>
+          <button type="submit" class="btn-submit no-guild__code-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            Entrar
+          </button>
+        </form>
+        <p class="no-guild__hint">
+          O código é fornecido pelo seu professor. Exemplo: <span class="no-guild__hint-ex">FEITICO-8B</span>
+        </p>
+      </div>
+
+      <div class="no-guild__divider">
+        <div class="no-guild__divider-line"></div>
+        <span class="no-guild__divider-text">ou</span>
+        <div class="no-guild__divider-line"></div>
+      </div>
+
+      <div class="no-guild__card no-guild__card--invite">
+        <div class="no-guild__invite-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="no-guild__invite-text">
+          <strong>Aguardar convite do professor</strong>
+          <span>Seu professor pode adicionar você à turma pelo e-mail cadastrado.</span>
+        </div>
+        <span class="no-guild__invite-emoji">⏳</span>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="no-guild__message no-guild__message--{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    </main>
+  </div>
+{% endblock %}

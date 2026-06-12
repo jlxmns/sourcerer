@@ -1,0 +1,80 @@
+<aside class="sidebar">
+  <div class="sidebar__profile">
+    <div class="sidebar__avatar-section">
+      <div class="sidebar__avatar">🧙</div>
+      {% if student.level %}
+        <div class="sidebar__level-badge">{{ student.level }}</div>
+      {% endif %}
+    </div>
+    <p class="sidebar__name">{{ request.user.first_name|default:request.user.username }}</p>
+    <p class="sidebar__guild">
+      {% if membership %}
+        {{ membership.guild.name }}
+      {% else %}
+        Sem turma
+      {% endif %}
+    </p>
+
+    <div class="sidebar__xp-section">
+      <div class="sidebar__xp-bar">
+        <div class="sidebar__xp-fill" style="width:{% widthratio student.mana 1500 100 %}%"></div>
+      </div>
+      <div class="sidebar__stats">
+        <span class="sidebar__stat">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          {{ student.mana }} mana
+        </span>
+        <span class="sidebar__stat sidebar__stat--gold">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 16.5 8.5 23 9.5 18 14.5 19.5 21 12 18 4.5 21 6 14.5 1 9.5 7.5 8.5 12 2"/></svg>
+          Nível {{ student.level }}
+        </span>
+      </div>
+    </div>
+
+    <div class="sidebar__badges">
+      {% if equipped_badges %}
+        {% for ub in equipped_badges %}
+          <span class="badge badge--purple">{{ ub.badge.name }}</span>
+        {% endfor %}
+      {% else %}
+        <p class="sidebar__no-badges">Sem distintivos</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if membership %}
+    <div class="sidebar__card">
+      <div class="sidebar__card-header">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/></svg>
+        <span class="sidebar__card-title">Ranking da Turma</span>
+      </div>
+      {% if guild_ranking %}
+        {% for entry in guild_ranking|slice:":5" %}
+          <div class="sidebar__rank-item{% if entry.is_me %} sidebar__rank-item--me{% endif %}">
+            <span class="sidebar__rank-pos">
+              {% if entry.position == 1 %}🥇{% elif entry.position == 2 %}🥈{% elif entry.position == 3 %}🥉{% else %}#{{ entry.position }}{% endif %}
+            </span>
+            <span class="sidebar__rank-name">{{ entry.student.user.first_name|default:entry.student.user.username }}</span>
+            <span class="sidebar__rank-xp">{{ entry.student.mana }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% if current_foe %}
+      <div class="sidebar__card sidebar__card--gold">
+        <div class="sidebar__card-header">
+          <span class="sidebar__card-icon">🐉</span>
+          <span class="sidebar__card-title sidebar__card-title--gold">Chefe da Turma</span>
+        </div>
+        <p class="sidebar__foe-name">{{ current_foe.foe.name }}</p>
+        <div class="sidebar__foe-bar">
+          <div class="sidebar__foe-fill" style="width:{{ current_foe.progress_percent }}%"></div>
+        </div>
+        <p class="sidebar__foe-sub">
+          <span class="sidebar__foe-count">{{ guild_student_count }} alunos</span> contribuíram
+        </p>
+      </div>
+    {% endif %}
+  {% endif %}
+</aside>

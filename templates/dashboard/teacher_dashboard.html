@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Painel do Professor{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Painel do Arquimago</h1>
+        <p>Bem-vindo, {{ teacher.user.get_full_name|default:teacher.user.username }}!</p>
+
+        <article>
+            <h2>Criar Nova Guilda</h2>
+            <form action="{% url 'dashboard:create_guild' %}" method="post">
+                {% csrf_token %}
+                <label for="guild_name">Nome da Guilda:</label>
+                <input type="text" id="guild_name" name="name" required>
+                <button type="submit">Criar</button>
+            </form>
+        </article>
+
+        <article>
+            <h2>Suas Guildas</h2>
+            {% if guilds %}
+                <ul>
+                    {% for guild in guilds %}
+                        <li>
+                            <a href="{% url 'dashboard:guild_detail' guild.pk %}">{{ guild.name }}</a>
+                            - Código: <strong>{{ guild.join_code }}</strong>
+                            - {{ guild.student_count }} aluno{{ guild.student_count|pluralize:'s' }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Você ainda não criou nenhuma guilda.</p>
+            {% endif %}
+        </article>
+    </section>
+{% endblock %}

@@ -5,11 +5,6 @@ from core.models import TimeStampedModel
 
 
 class User(AbstractUser):
-    """
-    Usuário central do SOurcerer.
-    Estender AbstractUser para adicionar apenas o campo papel (role).;
-    Dados extras de aluno/professor ficam nos perfis separados.
-    """
     class Role(models.TextChoices):
         STUDENT = 'student', 'Aluno'
         TEACHER = 'teacher', 'Professor'
@@ -27,49 +22,92 @@ class User(AbstractUser):
         return f"{self.username} ({self.get_role_display()})"
 
 
-class StudentProfile(TimeStampedModel):
-    """
-    Dados de gamificação e personalização do aluno.
-    Separado do User para não misturar autenticação com jogo.
-    """
-    class AvatarChoice(models.TextChoices):
-        MAGE_BLUE = 'mage_blue', 'Mago Azul'
-        MAGE_RED = 'mage_red', 'Mago Vermelho'
-        WITCH_GREEN = 'witch_green', 'Bruxa Verde'
-        WITCH_PURPLE = 'witch_purple', 'Bruxa Roxa'
+class Avatar(models.Model):
+    slug = models.SlugField(max_length=30, unique=True)
+    name = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name = 'Avatar'
+        verbose_name_plural = 'Avatares'
+
+    def get_image_for_level(self, level: int):
+        return self.images.filter(level__lte=level).order_by('-level').first()
+
+    def __str__(self):
+        return self.name
+
+
+class AvatarLevelImage(models.Model):
+    avatar = models.ForeignKey(
+        Avatar, on_delete=models.CASCADE, related_name='images'
+    )
+    level = models.PositiveIntegerField()
+    image = models.ImageField(upload_to='avatars/')
+
+    class Meta:
+        verbose_name = 'Imagem de Avatar por Nível'
+        verbose_name_plural = 'Imagens de Avatar por Nível'
+        unique_together = ('avatar', 'level')
+        ordering = ('avatar', 'level')
+
+    def __str__(self):
+        return f"{self.avatar.name} - Nível {self.level}"
+
+
+class StudentProfile(TimeStampedModel):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name='student_profile',
         limit_choices_to={'role': User.Role.STUDENT}
     )
-    avatar = models.CharField(max_length=20, choices=AvatarChoice.choices, default=AvatarChoice.MAGE_BLUE)
+    avatar = models.ForeignKey(
+        Avatar,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='student_profiles'
+    )
     mana = models.PositiveIntegerField(default=0)
     level = models.PositiveIntegerField(default=1)
 
     def add_mana(self, amount: int):
-        """Adiciona mana e recalcula o nível."""
+        old_level = self.level
         self.mana += amount
         self.level = self._calculate_level()
+        if self.level > old_level:
+            self.check_level_badges()
+            from notifications.models import Notification
+            Notification.objects.create(
+                user=self.user,
+                type=Notification.Type.LEVEL_UP,
+                title=f"Subiu para o nível {self.level}!",
+                text="Parabéns! Você alcançou um novo nível.",
+                link_url="/students/perfil/",
+            )
         self.save()
 
     def _calculate_level(self):
-        """Nível baseado em faixas de mana."""
         thresholds = [0, 100, 300, 600, 1000, 1500]
         for lvl, threshold in enumerate(thresholds, start=1):
             if self.mana < threshold:
                 return lvl - 1
         return len(thresholds)
 
+    def check_level_badges(self):
+        from content.models import Badge, UserBadge
+        level_badges = Badge.objects.filter(
+            condition_type='level_reached',
+            condition_value=str(self.level)
+        )
+        for badge in level_badges:
+            UserBadge.objects.get_or_create(student=self, badge=badge)
+
     def __str__(self):
         return f"Perfil de {self.user.username} - Nível {self.level}"
 
 
 class TeacherProfile(TimeStampedModel):
-    """
-    Dados simples do professor (Arquimago).
-    """
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,

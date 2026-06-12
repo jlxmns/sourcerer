@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Poderoso Inimigo - {{ guild.name }}{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Poderoso Inimigo - {{ guild.name }}</h1>
+
+        {% if current_foe %}
+            <article>
+                <h2>{{ current_foe.foe.name }}</h2>
+                {% if current_foe.foe.image %}
+                    <img src="{{ current_foe.foe.image.url }}" alt="{{ current_foe.foe.name }}">
+                {% endif %}
+                <p>{{ current_foe.foe.description }}</p>
+
+                <p><strong>Progresso:</strong> {{ current_foe.progress_percent|floatformat:1 }}%</p>
+                <p><strong>Mana contribuída:</strong> {{ current_foe.total_mana_contributed }}</p>
+                <p><strong>Mana restante:</strong> {{ current_foe.mana_remaining }}</p>
+            </article>
+        {% else %}
+            <p>Todos os inimigos foram derrotados! 🎉</p>
+        {% endif %}
+
+        {% if defeated_foes %}
+            <article>
+                <h2>Inimigos Derrotados</h2>
+                <ul>
+                    {% for progress in defeated_foes %}
+                        <li>{{ progress.foe.name }} - Derrotado em {{ progress.defeated_at|date:'d/m/Y' }}</li>
+                    {% endfor %}
+                </ul>
+            </article>
+        {% endif %}
+
+        <nav>
+            <a href="{% url 'classes:guild_ranking' guild.pk %}">Ver Ranking</a>
+            {% if user.is_teacher %}
+                <a href="{% url 'dashboard:guild_detail' guild.pk %}">Voltar</a>
+            {% else %}
+                <a href="{% url 'dashboard:student_dashboard' %}">Voltar</a>
+            {% endif %}
+        </nav>
+    </section>
+{% endblock %}

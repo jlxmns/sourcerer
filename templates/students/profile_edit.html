@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/student.css' %}">
+{% endblock %}
+
+{% block body_class %}student-page{% endblock %}
+
+{% block content %}
+  {% include 'components/student_header.html' %}
+
+  <div class="student-layout">
+    <div class="student-layout__sidebar">
+      {% include 'components/student_sidebar.html' %}
+    </div>
+
+    <main class="student-layout__main profile-edit">
+      <h1 class="profile-edit__title">Editar Perfil</h1>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="form-errors" style="margin-bottom:1rem;{% if message.tags == 'success' %}background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#86efac{% endif %}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" action="{% url 'students:profile_edit' %}" class="profile-edit__form">
+        {% csrf_token %}
+
+        <div class="profile-edit__section">
+          <h2 class="profile-edit__section-title">Informações pessoais</h2>
+
+          <div class="form-group">
+            <label class="form-group__label" for="id_first_name">Nome completo</label>
+            <div class="input-wrapper">
+              <input type="text"
+                     name="first_name"
+                     id="id_first_name"
+                     value="{{ request.user.first_name }}"
+                     placeholder="Seu nome"
+                     autocomplete="name"
+                     class="form-input"
+                     style="padding-left:0.75rem">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-group__label">E-mail</label>
+            <div class="input-wrapper">
+              <input type="email"
+                     value="{{ request.user.email }}"
+                     class="form-input"
+                     style="padding-left:0.75rem;opacity:0.6"
+                     disabled>
+            </div>
+            <p class="field-hint" style="font-size:0.75rem;color:#4a3d7a;margin-top:0.25rem">O e-mail não pode ser alterado.</p>
+          </div>
+        </div>
+
+        <div class="profile-edit__section">
+          <h2 class="profile-edit__section-title">Avatar</h2>
+          <div class="profile-edit__avatar-grid">
+            {% for avatar in avatars %}
+              <label class="profile-edit__avatar-option">
+                <input type="radio" name="avatar" value="{{ avatar.pk }}"
+                       {% if student.avatar and student.avatar.pk == avatar.pk %}checked{% endif %}>
+                <div class="profile-edit__avatar-box">
+                  <img src="{{ avatar.get_image_for_level|default_if_none:'#' }}" alt="{{ avatar.name }}">
+                  <span>{{ avatar.name }}</span>
+                </div>
+              </label>
+            {% empty %}
+              <p class="sidebar__no-badges">Nenhum avatar disponível.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="profile-edit__section">
+          <h2 class="profile-edit__section-title">Distintivos em exibição</h2>
+          <p class="profile-edit__hint">Escolha até 3 distintivos para mostrar no seu perfil.</p>
+
+          <div class="profile-edit__badge-slots">
+            {% for slot in "123" %}
+              <div class="profile-edit__badge-slot">
+                <label class="form-group__label">Slot {{ slot }}</label>
+                <select name="badge_slot_{{ slot }}" class="profile-edit__select">
+                  <option value="">— Nenhum —</option>
+                  {% for ub in all_badges %}
+                    <option value="{{ ub.pk }}"
+                      {% if ub.display_order == slot %}selected{% endif %}>
+                      {{ ub.badge.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if not all_badges %}
+            <p class="sidebar__no-badges">Você ainda não possui nenhum distintivo.</p>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit" style="max-width:16rem">
+          Salvar alterações
+        </button>
+      </form>
+    </main>
+  </div>
+{% endblock %}

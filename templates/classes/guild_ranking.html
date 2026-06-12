@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Ranking - {{ guild.name }}{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Ranking - {{ guild.name }}</h1>
+
+        {% if ranking_data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Aluno</th>
+                        <th>Nível</th>
+                        <th>Mana</th>
+                        <th>Feitiços Completados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in ranking_data %}
+                        <tr>
+                            <td>{{ data.position }}º</td>
+                            <td>{{ data.student.user.get_full_name|default:data.student.user.username }}</td>
+                            <td>{{ data.student.level }}</td>
+                            <td>{{ data.student.mana }}</td>
+                            <td>{{ data.total_completions }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum aluno nesta guilda.</p>
+        {% endif %}
+
+        <nav>
+            <a href="{% url 'classes:guild_foe' guild.pk %}">Ver Poderoso Inimigo</a>
+            {% if user.is_teacher %}
+                <a href="{% url 'dashboard:guild_detail' guild.pk %}">Voltar</a>
+            {% else %}
+                <a href="{% url 'dashboard:student_dashboard' %}">Voltar</a>
+            {% endif %}
+        </nav>
+    </section>
+{% endblock %}

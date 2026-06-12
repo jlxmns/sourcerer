@@ -1,9 +1,11 @@
 from django.urls import path
 from . import views
 
+app_name = 'content'
+
 urlpatterns = [
-    path('modules/', views.module_list, name='module_list'),
-    path('modules/<slug:slug>/', views.module_detail, name='module_detail'),
-    path('modules/<slug:module_slug>/challenges/<int:challenge_id>/', views.challenge_detail, name='challenge_detail'),
-    path('challenges/<int:challenge_id>/save-attempt/', views.save_attempt, name='save_attempt'),
+    path('', views.grimoire_list, name='grimoire_list'),
+    path('grimoire/<int:grimoire_id>/', views.grimoire_detail, name='grimoire_detail'),
+    path('feitico/<int:spell_id>/', views.spell_detail, name='spell_detail'),
+    path('feitico/<int:spell_id>/submeter/', views.spell_submit, name='spell_submit'),
 ]
