@@ -7,4 +7,5 @@ dependencies = [
     "pillow>=12.2.0",
     "psycopg[binary]>=3.3.4",
     "python-dotenv>=1.2.2",
+    "restrictedpython>=8.2",
 ]

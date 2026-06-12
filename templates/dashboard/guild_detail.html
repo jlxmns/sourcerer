@@ -1,47 +1,197 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}{{ guild.name }}{% endblock %}
+{% block title %}{{ guild.name }} — Painel do Professor{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/teacher.css' %}">
+{% endblock %}
 
 {% block content %}
-    <section>
-        <h1>{{ guild.name }}</h1>
-        <p>Código de entrada: <strong>{{ guild.join_code }}</strong></p>
-        <p>Total de alunos: {{ student_count }}</p>
+<div class="teacher-layout">
+  {% include 'components/teacher_sidebar.html' %}
 
-        <article>
-            <h2>Progresso dos Alunos</h2>
-            {% if students_data %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Aluno</th>
-                            <th>Nível</th>
-                            <th>Mana</th>
-                            <th>Feitiços Completados</th>
-                            <th>Grimórios Completados</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for data in students_data %}
-                            <tr>
-                                <td>{{ data.student.user.get_full_name|default:data.student.user.username }}</td>
-                                <td>{{ data.student.level }}</td>
-                                <td>{{ data.student.mana }}</td>
-                                <td>{{ data.total_completions }}</td>
-                                <td>{{ data.grimoires_completed }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Nenhum aluno nesta guilda ainda.</p>
-            {% endif %}
-        </article>
+  <div class="teacher-main-area">
+    {% include 'components/teacher_header.html' %}
 
-        <nav>
-            <a href="{% url 'classes:guild_ranking' guild.pk %}">Ver Ranking</a>
-            <a href="{% url 'classes:guild_foe' guild.pk %}">Ver Poderoso Inimigo</a>
-            <a href="{% url 'dashboard:teacher_dashboard' %}">Voltar</a>
-        </nav>
-    </section>
+    <main class="teacher-content">
+
+      <!-- Breadcrumb -->
+      <a href="{% url 'dashboard:teacher_dashboard' %}" class="teacher-breadcrumb">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Voltar ao Dashboard
+      </a>
+
+      <!-- Hero -->
+      <div class="guild-hero">
+        <div class="guild-hero__bg"></div>
+        <div class="guild-hero__icon">⚔️</div>
+
+        <div class="guild-hero__body">
+          <div class="guild-hero__top">
+            <h1 class="guild-hero__title">{{ guild.name }}</h1>
+            <span class="teacher-badge teacher-badge--cyan">{{ hero.student_count }} alunos</span>
+            <span class="teacher-badge teacher-badge--purple">Nível médio {{ hero.avg_level }}</span>
+          </div>
+          <p class="guild-hero__teacher">
+            Responsável: {{ hero.teacher_name }}{% if hero.school %} · {{ hero.school }}{% endif %}
+          </p>
+          <div class="guild-hero__stats">
+            <span class="guild-hero__stat guild-hero__stat--mana">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <strong>{{ hero.total_mana }}</strong> mana total
+            </span>
+            <span class="guild-hero__stat guild-hero__stat--grim">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <strong>{{ hero.total_grimoires }}</strong> grimórios
+            </span>
+            <span class="guild-hero__stat guild-hero__stat--spell">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <strong>{{ hero.total_spells }}</strong> feitiços
+            </span>
+            <span class="guild-hero__stat guild-hero__stat--prog">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+              <strong>{{ hero.avg_progress }}%</strong> progresso médio
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column: ranking + foe -->
+      <div class="teacher-row" style="grid-template-columns:1fr 300px">
+
+        <!-- Ranking -->
+        <div class="teacher-card">
+          <div class="teacher-card__header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 6 9 6 9z"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 18 9 18 9z"/><path d="M4 22h16"/><path d="M10 22V2h4v20"/></svg>
+            <span class="teacher-card__title">Ranking interno — por Mana</span>
+          </div>
+          <div class="teacher-card__body teacher-card__body--divide">
+            {% for entry in ranking_data %}
+              <div class="guild-rank-row">
+                <span class="guild-rank-row__pos
+                  {% if entry.position == 1 %}guild-rank-row__pos--gold
+                  {% elif entry.position == 2 %}guild-rank-row__pos--silver
+                  {% elif entry.position == 3 %}guild-rank-row__pos--bronze
+                  {% else %}guild-rank-row__pos--default{% endif %}">
+                  {% if entry.position == 1 %}🥇{% elif entry.position == 2 %}🥈{% elif entry.position == 3 %}🥉{% else %}#{{ entry.position }}{% endif %}
+                </span>
+                <span class="guild-rank-row__avatar">{{ entry.student.user.get_full_name|first|default:entry.student.user.username|first }}</span>
+                <div class="guild-rank-row__info">
+                  <p class="guild-rank-row__name">{{ entry.student.user.get_full_name|default:entry.student.user.username }}</p>
+                  <div class="guild-rank-row__bar-row">
+                    <div class="teacher-bar" style="flex:1;height:0.375rem">
+                      <div class="teacher-bar__fill--purple" style="width:{{ entry.progress }}%;height:100%;border-radius:999px;background:#7c3aed"></div>
+                    </div>
+                    <span class="guild-rank-row__pct">{{ entry.progress }}%</span>
+                  </div>
+                </div>
+                <div class="guild-rank-row__mana">
+                  <p class="guild-rank-row__mana-val">{{ entry.mana }}</p>
+                  <p class="guild-rank-row__mana-label">mana</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Foe card -->
+        <div class="teacher-card teacher-card--gold">
+          {% if foe_data %}
+            <div class="teacher-card__header">
+              <span class="teacher-card__icon">🐉</span>
+              <div>
+                <p class="teacher-card__title teacher-card__title--gold">Inimigo da Guilda</p>
+                <p class="teacher-card__sub">{{ foe_data.name }}</p>
+              </div>
+            </div>
+
+            <div class="teacher-card__body" style="padding:1rem">
+              <div class="guild-foe-bar">
+                <div class="guild-foe-bar__label">
+                  <span>Dano total acumulado</span>
+                  <span>{{ foe_data.progress }}%</span>
+                </div>
+                <div class="teacher-bar" style="height:0.5rem">
+                  <div class="teacher-bar__fill--gold" style="width:{{ foe_data.progress }}%;height:100%;border-radius:999px;background:#d4a017"></div>
+                </div>
+              </div>
+              <p class="guild-foe-sub">
+                <span class="guild-foe-sub__num">{{ foe_data.guild_total_mana }}</span> / <span>{{ foe_data.foe_mana_required }}</span> mana
+              </p>
+
+              {% if foe_data.recent_contributions %}
+                <div class="guild-foe-recent">
+                  <p class="guild-foe-recent__title">Contribuições recentes</p>
+                  {% for c in foe_data.recent_contributions %}
+                    <div class="guild-foe-recent__row">
+                      <span>{{ c.name }}</span>
+                      <span class="guild-foe-recent__dano">+{{ c.mana }} dano</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="teacher-card__header">
+              <span class="teacher-card__icon">🐉</span>
+              <p class="teacher-card__title teacher-card__title--gold">Inimigo da Guilda</p>
+            </div>
+            <div class="teacher-card__body" style="padding:1rem">
+              <p class="guild-foe-sub">Todos os inimigos foram derrotados! 🎉</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Full student table -->
+      <div class="teacher-card">
+        <div class="teacher-card__header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="teacher-card__title">Todos os alunos da guilda</span>
+          <span class="teacher-card__count">{{ hero.student_count }} alunos</span>
+        </div>
+
+        {% if students_data %}
+          <div class="guild-table">
+            <div class="guild-table__header">
+              <span>Aluno</span>
+              <span>Nível</span>
+              <span>Mana</span>
+              <span>Grimórios</span>
+              <span>Feitiços</span>
+              <span>Progresso</span>
+            </div>
+            {% for s in students_data %}
+              <div class="guild-table__row">
+                <div class="guild-table__cell guild-table__cell--name">
+                  <span class="guild-table__avatar">{{ s.student.user.get_full_name|first|default:s.student.user.username|first }}</span>
+                  <span>{{ s.student.user.get_full_name|default:s.student.user.username }}</span>
+                </div>
+                <span class="guild-table__cell guild-table__cell--num">{{ s.level }}</span>
+                <span class="guild-table__cell guild-table__cell--mana">{{ s.mana }}</span>
+                <span class="guild-table__cell guild-table__cell--num">{{ s.grimoires_completed }}</span>
+                <span class="guild-table__cell guild-table__cell--num">{{ s.spells_completed }}</span>
+                <div class="guild-table__cell guild-table__cell--bar">
+                  <div class="teacher-bar">
+                    <div class="teacher-bar__fill
+                      {% if s.progress >= 70 %}teacher-bar__fill--purple
+                      {% elif s.progress >= 40 %}teacher-bar__fill--gold
+                      {% else %}teacher-bar__fill--cyan{% endif %}"
+                      style="width:{{ s.progress }}%"></div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="teacher-empty">Nenhum aluno nesta guilda.</p>
+        {% endif %}
+      </div>
+
+    </main>
+  </div>
+</div>
 {% endblock %}

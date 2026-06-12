@@ -122,9 +122,12 @@
 
 .student-header__xp-num {
   font-size: 0.75rem;
-  color: #d4a017;
+  color: #67e8f9;
   font-weight: 600;
   font-family: 'Inter', system-ui, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .student-header__xp-bar {
@@ -141,37 +144,6 @@
   border-radius: 999px;
   transition: width 0.5s;
   box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
-}
-
-/* Mana */
-.student-header__mana {
-  display: none;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  background: #1a1438;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(6, 182, 212, 0.2);
-  color: #06b6d4;
-}
-
-@media (min-width: 768px) {
-  .student-header__mana {
-    display: flex;
-  }
-}
-
-.student-header__mana-value {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #67e8f9;
-  font-family: 'Inter', system-ui, sans-serif;
-}
-
-.student-header__mana-label {
-  font-size: 0.75rem;
-  color: #8b7db8;
-  font-family: 'Inter', system-ui, sans-serif;
 }
 
 /* Badges in header */
@@ -611,9 +583,12 @@
 }
 
 .sidebar__rank-xp {
-  color: #d4a017;
+  color: #67e8f9;
   font-weight: 600;
   font-family: 'Courier New', monospace;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 /* Foe card */
@@ -645,11 +620,30 @@
   font-size: 0.75rem;
   color: #8b7db8;
   font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.sidebar__foe-count {
-  color: #f0c040;
-  font-weight: 600;
+.sidebar__foe-amount {
+  color: #67e8f9;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.sidebar__foe-sep {
+  color: #9b8ec8;
+}
+
+.sidebar__foe-required {
+  color: #b4a6d8;
+  font-weight: 500;
+}
+
+.sidebar__foe-label {
+  color: #67e8f9;
 }
 
 /* =============================================
@@ -760,6 +754,8 @@
   padding: 0.75rem 1rem;
   color: #e8e0f8;
   font-size: 0.9375rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.08em;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -781,7 +777,7 @@
 
 .no-guild__hint {
   font-size: 0.75rem;
-  color: #4a3d7a;
+  color: #8b7db8;
   margin-top: 0.5rem;
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -807,7 +803,7 @@
 
 .no-guild__divider-text {
   font-size: 0.75rem;
-  color: #4a3d7a;
+  color: #8b7db8;
   font-family: 'Inter', system-ui, sans-serif;
   flex-shrink: 0;
 }
@@ -965,7 +961,6 @@
 .grimorio-card--blocked {
   background: #0f0c22;
   border-color: rgba(74, 61, 122, 0.3);
-  opacity: 0.6;
 }
 
 .grimorio-card--completed {
@@ -1014,7 +1009,7 @@
 .grimorio-card__icon--locked {
   background: rgba(74, 61, 122, 0.2);
   border-color: rgba(74, 61, 122, 0.3);
-  color: #4a3d7a;
+  color: #8b7db8;
 }
 
 .grimorio-card__info {
@@ -1033,7 +1028,7 @@
 }
 
 .grimorio-card--blocked .grimorio-card__title {
-  color: #4a3d7a;
+  color: #8b7db8;
 }
 
 /* Tags */
@@ -1080,7 +1075,7 @@
 }
 
 .grimorio-card--blocked .grimorio-card__description {
-  color: #3a2d5a;
+  color: #8b7db8;
 }
 
 /* Progress */
@@ -1132,7 +1127,7 @@
   gap: 0.25rem;
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 0.75rem;
-  color: #d4a017;
+  color: #67e8f9;
 }
 
 .grimorio-card__action {
@@ -1158,7 +1153,7 @@
 .grimorio-card__blocked-hint {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 0.6875rem;
-  color: #4a3d7a;
+  color: #8b7db8;
   line-height: 1.4;
   padding: 0.5rem 0.625rem;
   background: rgba(74, 61, 122, 0.15);
@@ -1287,4 +1282,1435 @@
 .profile-edit__select:focus {
   border-color: #7c3aed;
   box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.25);
+}
+
+/* =============================================
+   Field hint
+   ============================================= */
+.field-hint {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  margin-top: 0.25rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.field-hint ul {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.field-hint li {
+  position: relative;
+  padding: 0.3rem 0 0.3rem 1rem;
+  font-size: 0.7rem;
+  color: #7b6da8;
+  line-height: 1.45;
+}
+
+.field-hint li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4a3d7a;
+}
+
+/* =============================================
+   Inline button (for base.html logout)
+   ============================================= */
+.btn-inline {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+/* =============================================
+   Form errors — success modifier
+   ============================================= */
+.form-errors--success {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
+}
+
+/* =============================================
+   Form input — no icon variant
+   ============================================= */
+.form-input--no-icon {
+  padding-left: 0.75rem;
+}
+
+/* =============================================
+   Profile edit form — narrow
+   ============================================= */
+.profile-edit__form--narrow {
+  max-width: 28rem;
+}
+
+/* =============================================
+   Password change done
+   ============================================= */
+.password-done__container {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.password-done__icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.password-done__text {
+  color: #8b7db8;
+  margin-bottom: 2rem;
+}
+
+.password-done__btn {
+  display: inline-flex;
+  width: auto;
+  padding: 0.75rem 2rem;
+  text-decoration: none;
+}
+
+/* =============================================
+   Grimorio list page
+   ============================================= */
+.grimorio-list__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: #e8e0f8;
+  margin-bottom: 1.5rem;
+}
+
+.grimorio-list__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.grimorio-list__card {
+  display: block;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.grimorio-list__card:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.2);
+}
+
+.grimorio-list__card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: #c4b5fd;
+  margin-bottom: 0.75rem;
+}
+
+.grimorio-list__progress {
+  height: 0.5rem;
+  background: #0d0a1e;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.grimorio-list__progress-fill {
+  height: 100%;
+  background: #7c3aed;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
+  transition: width 0.5s;
+}
+
+.grimorio-list__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.grimorio-list__count {
+  color: #8b7db8;
+}
+
+.grimorio-list__status {
+  font-weight: 600;
+}
+
+.grimorio-list__status--complete {
+  color: #86efac;
+}
+
+.grimorio-list__status--reward {
+  color: #67e8f9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.grimorio-list__empty {
+  color: #8b7db8;
+  font-size: 0.875rem;
+  grid-column: 1 / -1;
+}
+
+.grimorio-list__card--blocked {
+  background: #0f0c22;
+  border-color: rgba(74, 61, 122, 0.3);
+  cursor: default;
+}
+
+.grimorio-list__card--blocked:hover {
+  border-color: rgba(74, 61, 122, 0.3);
+  box-shadow: none;
+}
+
+.grimorio-list__card--blocked .grimorio-list__card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  color: #8b7db8;
+}
+
+.grimorio-list__blocked-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 125, 184, 0.25);
+  background: rgba(139, 125, 184, 0.15);
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.grimorio-list__blocked-hint {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.6875rem;
+  color: #8b7db8;
+  line-height: 1.4;
+  padding: 0.5rem 0.625rem;
+  background: rgba(74, 61, 122, 0.15);
+  border-radius: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* =============================================
+   Grimorio detail page
+   ============================================= */
+.grimorio-detail__nav {
+  margin-bottom: 1.25rem;
+}
+
+.grimorio-detail__nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.grimorio-detail__nav-link:hover {
+  color: #c4b5fd;
+}
+
+.grimorio-detail__nav-icon {
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.grimorio-detail__nav-link:hover .grimorio-detail__nav-icon {
+  transform: translateX(-0.125rem);
+}
+
+/* Hero */
+.grimorio-detail__hero {
+  position: relative;
+  background: #100d24;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+}
+
+.grimorio-detail__hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(124, 58, 237, 0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.grimorio-detail__hero-decoration {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 16rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.05;
+  color: #c4b5fd;
+  pointer-events: none;
+  user-select: none;
+}
+
+.grimorio-detail__hero-inner {
+  position: relative;
+  z-index: 10;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.grimorio-detail__hero-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.grimorio-detail__hero-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(76, 29, 149, 0.4));
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c4b5fd;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.25);
+}
+
+.grimorio-detail__hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.grimorio-detail__hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.grimorio-detail__hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: #e8e0f8;
+}
+
+.grimorio-detail__hero-required-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.grimorio-detail__hero-desc {
+  font-size: 0.875rem;
+  color: #8b7db8;
+  margin-bottom: 1rem;
+  max-width: 40rem;
+  line-height: 1.5;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.grimorio-detail__hero-metrics {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.grimorio-detail__hero-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.grimorio-detail__hero-metric--spells {
+  color: #c4b5fd;
+}
+
+.grimorio-detail__hero-metric--mana {
+  color: #67e8f9;
+}
+
+.grimorio-detail__hero-metric--badges {
+  color: #86efac;
+}
+
+.grimorio-detail__metric-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.grimorio-detail__metric-label {
+  white-space: nowrap;
+}
+
+.grimorio-detail__hero-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.grimorio-detail__hero-pct {
+  font-family: 'Cinzel', serif;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  line-height: 1;
+}
+
+.grimorio-detail__hero-pct-label {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.grimorio-detail__hero-bar {
+  width: 10rem;
+  height: 0.75rem;
+  background: #1e1540;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.grimorio-detail__hero-bar-fill {
+  height: 100%;
+  background: #7c3aed;
+  border-radius: 999px;
+  transition: width 0.5s;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
+}
+
+/* Spells section (flat, no card) */
+.grimorio-detail__spell-section {
+  margin-bottom: 1.5rem;
+}
+
+.grimorio-detail__spell-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.grimorio-detail__spell-heading-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: #e8e0f8;
+}
+
+.grimorio-detail__spell-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: #8b7db8;
+}
+
+.grimorio-detail__spell-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.grimorio-detail__spell-legend-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.grimorio-detail__spell-legend-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #7c3aed;
+  flex-shrink: 0;
+}
+
+.grimorio-detail__spell-legend-label {
+  white-space: nowrap;
+}
+
+.grimorio-detail__spells {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Spell row base */
+.grimorio-detail__spell-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid;
+  padding: 0.875rem 1rem;
+  transition: all 0.15s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.grimorio-detail__spell-row:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+.grimorio-detail__spell-row--completed {
+  background: #0f1e14;
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.grimorio-detail__spell-row--completed:hover {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.grimorio-detail__spell-row--in-progress {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.08);
+}
+
+.grimorio-detail__spell-row--in-progress:hover {
+  border-color: rgba(124, 58, 237, 0.5);
+}
+
+.grimorio-detail__spell-row--available {
+  background: #16112e;
+  border-color: rgba(124, 58, 237, 0.15);
+}
+
+.grimorio-detail__spell-row--available:hover {
+  border-color: rgba(124, 58, 237, 0.35);
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.grimorio-detail__spell-row--blocked {
+  background: #0c0a1c;
+  border-color: rgba(74, 61, 122, 0.2);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Status icon */
+.grimorio-detail__spell-status-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.grimorio-detail__spell-row--completed .grimorio-detail__spell-status-icon {
+  color: #22c55e;
+}
+
+.grimorio-detail__spell-row--blocked .grimorio-detail__spell-status-icon {
+  color: #8b7db8;
+}
+
+.grimorio-detail__spell-partial {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid #a78bfa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grimorio-detail__spell-partial-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #a78bfa;
+}
+
+.grimorio-detail__spell-number {
+  font-size: 0.8125rem;
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  color: #8b7db8;
+}
+
+/* Spell content */
+.grimorio-detail__spell-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.grimorio-detail__spell-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.125rem;
+}
+
+.grimorio-detail__spell-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.grimorio-detail__spell-name--completed {
+  color: #86efac;
+}
+
+.grimorio-detail__spell-name--blocked {
+  color: #8b7db8;
+}
+
+.grimorio-detail__spell-name--active {
+  color: #e8e0f8;
+}
+
+.grimorio-detail__spell-desc {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grimorio-detail__spell-desc--blocked {
+  color: #6b5d9a;
+}
+
+/* Spell tags (em andamento, badge) */
+.grimorio-detail__spell-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid;
+}
+
+.grimorio-detail__spell-tag--progress {
+  background: rgba(124, 58, 237, 0.15);
+  color: #c4b5fd;
+  border-color: rgba(124, 58, 237, 0.25);
+}
+
+.grimorio-detail__spell-tag--badge {
+  background: rgba(212, 160, 23, 0.1);
+  color: #d4a017;
+  border-color: rgba(212, 160, 23, 0.25);
+}
+
+.grimorio-detail__spell-tag--earned {
+  background: rgba(34, 197, 94, 0.1);
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+/* Metadata column */
+.grimorio-detail__spell-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.grimorio-detail__spell-difficulty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid;
+}
+
+.grimorio-detail__spell-difficulty--easy {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.grimorio-detail__spell-difficulty--medium {
+  background: rgba(212, 160, 23, 0.15);
+  color: #f0c040;
+  border-color: rgba(212, 160, 23, 0.35);
+}
+
+.grimorio-detail__spell-difficulty--hard {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.grimorio-detail__spell-mana {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #67e8f9;
+  font-family: 'Inter', system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.grimorio-detail__spell-mana--blocked {
+  color: #6b5d9a;
+}
+
+.grimorio-detail__spell-mana-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.grimorio-detail__spell-required-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid;
+}
+
+.grimorio-detail__spell-required-badge--required {
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+  border-color: rgba(124, 58, 237, 0.35);
+}
+
+.grimorio-detail__spell-required-badge--optional {
+  background: rgba(139, 125, 184, 0.15);
+  color: #8b7db8;
+  border-color: rgba(139, 125, 184, 0.25);
+}
+
+.grimorio-detail__spell-chevron {
+  color: #6b5d9a;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.grimorio-detail__spell-row:hover .grimorio-detail__spell-chevron {
+  color: #a78bfa;
+}
+
+.grimorio-detail__empty {
+  color: #8b7db8;
+  font-size: 0.875rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* =============================================
+   Spell detail page
+   ============================================= */
+.spell-detail {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 4rem);
+}
+
+/* Context bar */
+.spell-detail__context-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #100d24;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  flex-wrap: wrap;
+}
+
+.spell-detail__breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.spell-detail__breadcrumb:hover {
+  color: #c4b5fd;
+}
+
+.spell-detail__breadcrumb-icon {
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.spell-detail__breadcrumb:hover .spell-detail__breadcrumb-icon {
+  transform: translateX(-0.125rem);
+}
+
+.spell-detail__breadcrumb-sep {
+  color: #4a3d7a;
+  font-size: 0.8125rem;
+  user-select: none;
+}
+
+.spell-detail__breadcrumb-current {
+  font-size: 0.8125rem;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spell-detail__context-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.spell-detail__context-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.spell-detail__context-meta-item--mana {
+  color: #67e8f9;
+}
+
+.spell-detail__context-meta-item--index {
+  color: #8b7db8;
+  font-size: 0.75rem;
+}
+
+/* Two-column body */
+.spell-detail__body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left panel */
+.spell-detail__panel-left {
+  width: 22rem;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(124, 58, 237, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: #0d0a1e;
+}
+
+/* Description section */
+.spell-detail__desc-section {
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.spell-detail__desc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.spell-detail__desc-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  background: rgba(124, 58, 237, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.spell-detail__desc-title {
+  font-size: 0.95rem;
+  color: #e8e0f8;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.spell-detail__desc-text {
+  font-size: 0.8125rem;
+  color: #c4b5fd;
+  line-height: 1.625;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin-bottom: 0.75rem;
+}
+
+.spell-detail__desc-code {
+  display: inline;
+  font-family: 'Courier New', monospace;
+  background: rgba(124, 58, 237, 0.15);
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.25rem;
+  color: #c4b5fd;
+}
+
+/* Tip section */
+.spell-detail__tip-section {
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.spell-detail__tip-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8125rem;
+  color: #d4a017;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.spell-detail__tip-toggle:hover {
+  color: #f0c040;
+}
+
+.spell-detail__tip-content {
+  padding: 0 1.25rem 0.75rem;
+}
+
+.spell-detail__tip-body {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(212, 160, 23, 0.08);
+  border: 1px solid rgba(212, 160, 23, 0.2);
+  font-size: 0.75rem;
+  color: #c4b5fd;
+  line-height: 1.5;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Reward section */
+.spell-detail__reward {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.spell-detail__reward-label {
+  font-size: 0.625rem;
+  color: #8b7db8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 0.5rem;
+}
+
+.spell-detail__reward-items {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spell-detail__reward-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.spell-detail__reward-item--mana {
+  color: #67e8f9;
+}
+
+/* Feedback */
+.spell-detail__feedback {
+  padding: 1rem 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.spell-detail__feedback-card {
+  border-radius: 0.75rem;
+  border: 1px solid;
+  padding: 1rem;
+}
+
+.spell-detail__feedback--idle {
+  border-color: rgba(124, 58, 237, 0.15);
+  background: #16112e;
+  text-align: center;
+}
+
+.spell-detail__feedback--idle .spell-detail__feedback-text {
+  font-size: 0.75rem;
+  color: #4a3d7a;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.spell-detail__feedback--running {
+  border-color: rgba(124, 58, 237, 0.3);
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.spell-detail__feedback-running-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #c4b5fd;
+}
+
+.spell-detail__feedback-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #7c3aed;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spell-detail__feedback-running-text {
+  font-size: 0.8125rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.spell-detail__feedback--success {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.07);
+}
+
+.spell-detail__feedback--error {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.07);
+}
+
+.spell-detail__feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.spell-detail__feedback-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.spell-detail__feedback--success .spell-detail__feedback-title {
+  color: #86efac;
+}
+
+.spell-detail__feedback--error .spell-detail__feedback-title {
+  color: #fca5a5;
+}
+
+.spell-detail__feedback-body {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.spell-detail__feedback-body strong {
+  color: #c4b5fd;
+}
+
+.spell-detail__feedback-reward {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.spell-detail__feedback-reward-item {
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.spell-detail__feedback-reward-item--mana {
+  color: #67e8f9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Right panel */
+.spell-detail__panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.spell-detail__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #100d24;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.spell-detail__toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  line-height: 1;
+}
+
+.spell-detail__toolbar-btn:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+.spell-detail__toolbar-btn--primary {
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+}
+
+.spell-detail__toolbar-btn--primary:hover {
+  background: #6d28d9;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.5);
+}
+
+.spell-detail__toolbar-btn--gold {
+  background: rgba(212, 160, 23, 0.15);
+  color: #f0c040;
+  border-color: rgba(212, 160, 23, 0.35);
+}
+
+.spell-detail__toolbar-btn--gold:hover {
+  background: rgba(212, 160, 23, 0.25);
+}
+
+.spell-detail__toolbar-btn--ghost {
+  background: transparent;
+  color: #8b7db8;
+  border-color: rgba(139, 125, 184, 0.2);
+}
+
+.spell-detail__toolbar-btn--ghost:hover {
+  background: rgba(139, 125, 184, 0.1);
+  color: #c4b5fd;
+}
+
+.spell-detail__toolbar-attempts {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: #4a3d7a;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Blockly workspace */
+.spell-detail__workspace {
+  flex: 1;
+  position: relative;
+  background: #0b0919;
+  overflow: hidden;
+}
+
+.spell-detail__workspace-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.spell-detail__workspace-inner {
+  position: absolute;
+  inset: 0;
+}
+
+/* Completed banner */
+.spell-detail__completed {
+  background: #16112e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem;
+}
+
+.spell-detail__completed-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.spell-detail__completed-text {
+  color: #86efac;
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 0.25rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.spell-detail__completed-sub {
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Blockly theme overrides */
+.blocklySvg {
+  background-color: #0b0919 !important;
+}
+
+.blocklyMainBackground {
+  fill: #0b0919 !important;
+  stroke: none !important;
+}
+
+.blocklyToolboxDiv {
+  background: #100d24 !important;
+  border-right: 1px solid rgba(124, 58, 237, 0.15) !important;
+}
+
+.blocklyTreeRow {
+  height: 2.25rem !important;
+  border-color: rgba(124, 58, 237, 0.15) !important;
+  color: #8b7db8 !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 0.8125rem !important;
+}
+
+.blocklyTreeSelected .blocklyTreeRow {
+  background: rgba(124, 58, 237, 0.2) !important;
+  color: #c4b5fd !important;
+}
+
+.blocklyFlyoutBackground {
+  fill: #16112e !important;
+}
+
+.blocklyFlyoutLabelText {
+  fill: #8b7db8 !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 0.75rem !important;
+}
+
+.blocklyText {
+  fill: #e8e0f8 !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.blocklyFieldLabel {
+  fill: #c4b5fd !important;
+}
+
+.blocklyBubbleCanvas {
+  fill: #16112e !important;
+}
+
+.blocklyScrollbarBackground {
+  opacity: 0.3 !important;
+}
+
+.blocklyScrollbarHandle {
+  fill: rgba(124, 58, 237, 0.4) !important;
+}
+
+/* =============================================
+   Join guild page
+   ============================================= */
+.join-guild__container {
+  max-width: 28rem;
+}
+
+.join-guild__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: #e8e0f8;
+  margin-bottom: 0.5rem;
+}
+
+.join-guild__desc {
+  color: #8b7db8;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.join-guild__card {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.join-guild__code-input {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.08em;
+}
+
+.join-guild__nav {
+  margin-top: 1rem;
+}
+
+.join-guild__nav-link {
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  text-decoration: none;
+}
+
+.mana-value {
+  color: #67e8f9;
+  font-weight: 600;
+}
+
+.bonus-amount {
+  color: #f472b6;
+  font-weight: 700;
+}
+
+.grimorio-card__bonus,
+.grimorio-detail__bonus {
+  font-size: 0.7rem;
+  color: #f472b6;
+  margin-top: 0.25rem;
+}
+
+/* Spell completion modal */
+.spell-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spell-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 10, 30, 0.88);
+}
+
+.spell-modal__card {
+  position: relative;
+  background: linear-gradient(135deg, #1e1540, #16112e);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 1rem;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  max-width: 22rem;
+  width: 90%;
+  box-shadow: 0 0 60px rgba(124, 58, 237, 0.2);
+}
+
+.spell-modal__check {
+  margin-bottom: 1rem;
+}
+
+.spell-modal__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  margin: 0 0 1rem;
+}
+
+.spell-modal__reward {
+  font-size: 1rem;
+  color: #67e8f9;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  margin: 0 0 0.5rem;
+}
+
+.spell-modal__stats {
+  font-size: 0.8rem;
+  color: #8b7db8;
+  margin: 0 0 1.5rem;
+}
+
+.spell-modal__btn {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #7c3aed, #4c1d95);
+  color: #e8e0f8;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  border: none;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.spell-modal__btn:hover {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
 }

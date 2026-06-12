@@ -66,7 +66,7 @@ export function ProfileSidebar({ noClass = false }: ProfileSidebarProps) {
           <div className="flex items-center gap-2 mb-3">
             <Trophy size={15} className="text-[#d4a017]" />
             <span className="text-sm font-semibold text-[#e8e0f8]" style={{ fontFamily: 'var(--font-display)', fontSize: '0.8rem' }}>
-              Ranking da Turma
+              Ranking da Guilda
             </span>
           </div>
           <div className="space-y-2">
@@ -106,7 +106,7 @@ export function ProfileSidebar({ noClass = false }: ProfileSidebarProps) {
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">🐉</span>
             <span className="text-sm font-semibold text-[#f0c040]" style={{ fontFamily: 'var(--font-display)', fontSize: '0.8rem' }}>
-              Chefe da Turma
+              Inimigo da Guilda
             </span>
           </div>
           <p className="text-xs text-[#8b7db8] mb-2" style={{ fontFamily: 'var(--font-body)' }}>

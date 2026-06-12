@@ -2,7 +2,9 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from classes.models import Guild, GuildMembership, PowerfulFoe, GuildFoeProgress
+from classes.services import defeat_foe
 from accounts.models import StudentProfile, TeacherProfile
+from content.models import Badge, UserBadge
 
 User = get_user_model()
 
@@ -56,6 +58,21 @@ class GuildMembershipTest(TestCase):
         GuildMembership.objects.create(student=self.student, guild=self.guild)
         ranking = self.guild.ranking()
         self.assertIn(self.student, ranking)
+
+    def test_total_mana(self):
+        GuildMembership.objects.create(student=self.student, guild=self.guild)
+        self.assertEqual(self.guild.total_mana(), 0)
+
+        self.student.add_mana(50)
+        self.assertEqual(self.guild.total_mana(), 50)
+
+        student2_user = User.objects.create_user(
+            username='aluno2', password='test123', role='student'
+        )
+        student2 = StudentProfile.objects.get(user=student2_user)
+        student2.add_mana(30)
+        GuildMembership.objects.create(student=student2, guild=self.guild)
+        self.assertEqual(self.guild.total_mana(), 80)
 
 
 class PowerfulFoeTest(TestCase):
@@ -125,3 +142,43 @@ class GuildFoeProgressTest(TestCase):
         self.progress.total_mana_contributed = 10
         self.progress.defeated = True
         self.assertEqual(self.progress.mana_remaining(), 0)
+
+    def test_defeat_foe_awards_badge_to_all_members(self):
+        from accounts.models import StudentProfile
+        student1_user = User.objects.create_user(
+            username='aluno1', password='test123', role='student'
+        )
+        student1 = StudentProfile.objects.get(user=student1_user)
+        GuildMembership.objects.create(student=student1, guild=self.guild)
+
+        student2_user = User.objects.create_user(
+            username='aluno2', password='test123', role='student'
+        )
+        student2 = StudentProfile.objects.get(user=student2_user)
+        GuildMembership.objects.create(student=student2, guild=self.guild)
+
+        badge = Badge.objects.create(
+            name='Derrotou Goblin',
+            condition_type=Badge.ConditionType.FOE_DEFEATED,
+            condition_value='1',
+        )
+        self.foe.badge = badge
+        self.foe.save()
+
+        created = defeat_foe(self.progress)
+
+        self.assertTrue(self.progress.defeated)
+        self.assertIsNotNone(self.progress.defeated_at)
+        self.assertEqual(len(created), 2)
+        self.assertTrue(
+            UserBadge.objects.filter(student=student1, badge=badge).exists()
+        )
+        self.assertTrue(
+            UserBadge.objects.filter(student=student2, badge=badge).exists()
+        )
+
+    def test_defeat_foe_without_badge(self):
+        created = defeat_foe(self.progress)
+
+        self.assertTrue(self.progress.defeated)
+        self.assertEqual(created, [])

@@ -88,11 +88,28 @@ class StudentProfile(TimeStampedModel):
         self.save()
 
     def _calculate_level(self):
-        thresholds = [0, 100, 300, 600, 1000, 1500]
-        for lvl, threshold in enumerate(thresholds, start=1):
-            if self.mana < threshold:
-                return lvl - 1
-        return len(thresholds)
+        level = 1
+        remaining = self.mana
+        while remaining >= 10 * (level + 1):
+            remaining -= 10 * (level + 1)
+            level += 1
+        return level
+
+    @property
+    def mana_to_next_level(self):
+        return 10 * (self.level + 1)
+
+    @property
+    def mana_progress_in_level(self):
+        if self.level <= 1:
+            return self.mana
+        spent = 10 * (self.level * (self.level + 1) // 2 - 1)
+        return self.mana - spent
+
+    def level_progress_percent(self):
+        needed = self.mana_to_next_level
+        earned = self.mana_progress_in_level
+        return min(100, int(earned / needed * 100)) if needed > 0 else 0
 
     def check_level_badges(self):
         from content.models import Badge, UserBadge

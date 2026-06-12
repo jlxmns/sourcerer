@@ -33,16 +33,16 @@ class StudentProfileTest(TestCase):
     def test_add_mana_level_up(self):
         self.profile.add_mana(50)
         self.assertEqual(self.profile.mana, 50)
-        self.assertEqual(self.profile.level, 1)
+        self.assertEqual(self.profile.level, 3)
 
         self.profile.add_mana(50)
         self.assertEqual(self.profile.mana, 100)
-        self.assertEqual(self.profile.level, 2)
+        self.assertEqual(self.profile.level, 4)
 
     def test_add_mana_no_level_up(self):
-        self.profile.add_mana(99)
+        self.profile.add_mana(19)
         self.assertEqual(self.profile.level, 1)
-        self.assertEqual(self.profile.mana, 99)
+        self.assertEqual(self.profile.mana, 19)
 
 
 class AvatarModelTest(TestCase):

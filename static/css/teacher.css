@@ -1,0 +1,1348 @@
+/* =============================================
+   Teacher Dashboard
+   ============================================= */
+
+/* =============================================
+   Layout: sidebar + main area
+   ============================================= */
+.teacher-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #100d24;
+}
+
+/* Sidebar */
+.teacher-sidebar {
+  width: 14rem;
+  flex-shrink: 0;
+  background: #100d24;
+  border-right: 1px solid rgba(124, 58, 237, 0.18);
+  display: flex;
+  flex-direction: column;
+}
+
+.teacher-sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.teacher-sidebar__logo-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.45);
+}
+
+.teacher-sidebar__logo-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  letter-spacing: 0.05em;
+}
+
+.teacher-sidebar__profile {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0.75rem 0;
+  border-radius: 0.5rem;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.teacher-sidebar__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4c1d95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  flex-shrink: 0;
+}
+
+.teacher-sidebar__profile-info {
+  min-width: 0;
+}
+
+.teacher-sidebar__name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teacher-sidebar__role {
+  font-size: 0.625rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Navigation */
+.teacher-nav {
+  flex: 1;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.teacher-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #8b7db8;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.teacher-nav__item:hover {
+  background: rgba(124, 58, 237, 0.08);
+  color: #c4b5fd;
+}
+
+.teacher-nav__item--active {
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.teacher-nav__item--disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.teacher-nav__item--disabled:hover {
+  background: none;
+  color: #8b7db8;
+}
+
+.teacher-nav__dot {
+  margin-left: auto;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: #7c3aed;
+  flex-shrink: 0;
+}
+
+.teacher-nav__item--logout {
+  color: #f87171;
+}
+
+.teacher-nav__item--logout:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+}
+
+.teacher-sidebar__footer {
+  padding: 0.5rem;
+  border-top: 1px solid rgba(124, 58, 237, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.teacher-sidebar__footer form {
+  margin: 0;
+}
+
+/* =============================================
+   Main area (right of sidebar)
+   ============================================= */
+.teacher-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Top header */
+.teacher-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 4rem;
+  background: #100d24;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.18);
+  flex-shrink: 0;
+}
+
+.teacher-top-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.teacher-top-header__title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  margin: 0;
+}
+
+.teacher-top-header__subtitle {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-top-header__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.teacher-top-header__user {
+  position: relative;
+}
+
+.teacher-top-header__user-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  background: none;
+  border: none;
+  color: #e8e0f8;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-top-header__user-btn:hover {
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.teacher-top-header__user-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4c1d95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  flex-shrink: 0;
+}
+
+.teacher-top-header__user-name {
+  font-size: 0.8125rem;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Dropdown */
+.teacher-dropdown {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  right: 0;
+  min-width: 12rem;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.75rem;
+  padding: 0.375rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.teacher-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  color: #c4b5fd;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: background 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.teacher-dropdown__item:hover {
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.teacher-dropdown__item--danger {
+  color: #f87171;
+}
+
+.teacher-dropdown__item--danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+}
+
+/* Content area */
+.teacher-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* =============================================
+   Metrics row
+   ============================================= */
+.teacher-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.teacher-metric {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.teacher-metric__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.teacher-metric__label {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-metric__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-metric__icon--purple {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
+.teacher-metric__icon--cyan {
+  background: rgba(6, 182, 212, 0.10);
+  color: #06b6d4;
+}
+
+.teacher-metric__icon--pink {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+}
+
+.teacher-metric__icon--gold {
+  background: rgba(212, 160, 23, 0.12);
+  color: #d4a017;
+}
+
+.teacher-metric__icon--green {
+  background: rgba(34, 197, 94, 0.10);
+  color: #22c55e;
+}
+
+.teacher-metric__value {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  margin: 0;
+}
+
+/* =============================================
+   Main row: table + alert sidebar
+   ============================================= */
+.teacher-row {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 1.25rem;
+}
+
+.teacher-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.teacher-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.teacher-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.teacher-section__title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  margin: 0;
+}
+
+/* Button */
+.teacher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.teacher-btn--sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  background: #7c3aed;
+  color: #e8e0f8;
+  font-weight: 600;
+}
+
+.teacher-btn--sm:hover {
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+}
+
+/* Guild grid */
+.teacher-guild-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.teacher-guild-card {
+  display: block;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.teacher-guild-card:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.teacher-guild-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.teacher-guild-card__info {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.teacher-guild-card__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.27);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.teacher-guild-card__name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-guild-card__sub {
+  font-size: 0.625rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-guild-card__bar {
+  width: 100%;
+  height: 0.375rem;
+  background: #1e1540;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+.teacher-guild-card__fill {
+  height: 100%;
+  background: #7c3aed;
+  border-radius: 999px;
+  transition: width 0.5s;
+}
+
+.teacher-guild-card__label {
+  font-size: 0.625rem;
+  color: #4a3d7a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 0.5rem;
+}
+
+.teacher-guild-card__stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-guild-card__stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.teacher-guild-card__mana {
+  color: #d4a017;
+}
+
+/* Table */
+.teacher-table {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.teacher-table__header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 60px 80px 80px 80px 120px;
+  padding: 0.625rem 1rem;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a3d7a;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+  font-family: 'Courier New', monospace;
+}
+
+.teacher-table__row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 60px 80px 80px 80px 120px;
+  padding: 0.625rem 1rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.08);
+  transition: background 0.15s;
+}
+
+.teacher-table__row:last-child {
+  border-bottom: none;
+}
+
+.teacher-table__row:hover {
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.teacher-table__cell {
+  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-table__cell--name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e8e0f8;
+  font-weight: 500;
+  min-width: 0;
+}
+
+.teacher-table__avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4c1d95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  color: #e8e0f8;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.teacher-table__cell--guild {
+  color: #8b7db8;
+}
+
+.teacher-table__cell--num {
+  color: #c4b5fd;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.teacher-table__cell--mana {
+  color: #67e8f9;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.teacher-table__cell--bar {
+  padding-right: 0.75rem;
+}
+
+.teacher-bar {
+  width: 100%;
+  height: 0.5rem;
+  background: #1e1540;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.teacher-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s;
+}
+
+.teacher-bar__fill--purple {
+  background: #7c3aed;
+  box-shadow: 0 0 6px rgba(124, 58, 237, 0.4);
+}
+
+.teacher-bar__fill--gold {
+  background: #d4a017;
+  box-shadow: 0 0 6px rgba(212, 160, 23, 0.4);
+}
+
+.teacher-bar__fill--cyan {
+  background: #06b6d4;
+  box-shadow: 0 0 6px rgba(6, 182, 212, 0.4);
+}
+
+/* Empty state */
+.teacher-empty {
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Alert sidebar panel */
+.teacher-sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.teacher-sidebar-card {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.teacher-sidebar-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.teacher-sidebar-card__title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e8e0f8;
+}
+
+.teacher-sidebar-card__count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  background: rgba(212, 160, 23, 0.15);
+  color: #d4a017;
+  border: 1px solid rgba(212, 160, 23, 0.3);
+  padding: 0.125rem 0.375rem;
+  border-radius: 999px;
+  font-family: 'Courier New', monospace;
+}
+
+.teacher-sidebar-card__subtitle {
+  padding: 0.75rem 1rem;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a3d7a;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.teacher-sidebar-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.teacher-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.08);
+  transition: background 0.15s;
+}
+
+.teacher-alert:last-child {
+  border-bottom: none;
+}
+
+.teacher-alert:hover {
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.teacher-alert__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  margin-top: 0.375rem;
+  flex-shrink: 0;
+}
+
+.teacher-alert__dot--risco {
+  background: #d4a017;
+}
+
+.teacher-alert__dot--inativo {
+  background: #4a3d7a;
+}
+
+.teacher-alert__name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-alert__msg {
+  font-size: 0.625rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-alert__guild {
+  font-size: 0.625rem;
+  color: #4a3d7a;
+  margin: 0.125rem 0 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  color: #c4b5fd;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.08);
+  transition: background 0.15s;
+}
+
+.teacher-action-btn:last-child {
+  border-bottom: none;
+}
+
+.teacher-action-btn:hover {
+  background: rgba(124, 58, 237, 0.12);
+}
+
+/* =============================================
+   Responsive
+   ============================================= */
+@media (max-width: 1024px) {
+  .teacher-metrics {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .teacher-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .teacher-sidebar {
+    width: 3.5rem;
+  }
+
+  .teacher-sidebar__logo-text,
+  .teacher-sidebar__profile-info,
+  .teacher-nav__item span,
+  .teacher-nav__dot,
+  .teacher-sidebar__footer .teacher-nav__item span {
+    display: none;
+  }
+
+  .teacher-top-header__user-name {
+    display: none;
+  }
+
+  .teacher-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .teacher-guild-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-table__header,
+  .teacher-table__row {
+    grid-template-columns: 2fr 1fr 50px 60px 60px;
+  }
+
+  .teacher-table__header span:nth-child(n+6),
+  .teacher-table__row .teacher-table__cell:nth-child(n+6) {
+    display: none;
+  }
+}
+
+/* =============================================
+   Centered page (password change for teachers)
+   ============================================= */
+.teacher-centered-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #100d24;
+  padding: 2rem;
+}
+
+.teacher-centered-page__card {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  max-width: 28rem;
+  width: 100%;
+}
+
+.teacher-centered-page__card--done {
+  text-align: center;
+}
+
+.teacher-centered-page__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  margin: 0 0 1.5rem;
+}
+
+.teacher-centered-page__icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.teacher-centered-page__text {
+  font-size: 0.875rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0 0 1.5rem;
+}
+
+.btn-cancel {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #8b7db8;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.btn-cancel:hover {
+  color: #c4b5fd;
+}
+
+/* =============================================
+   Guild detail page
+   ============================================= */
+
+/* Breadcrumb */
+.teacher-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin-bottom: 1rem;
+  transition: color 0.15s;
+}
+
+.teacher-breadcrumb:hover {
+  color: #c4b5fd;
+}
+
+.teacher-breadcrumb svg {
+  transition: transform 0.15s;
+}
+
+.teacher-breadcrumb:hover svg {
+  transform: translateX(-2px);
+}
+
+/* Badge pills */
+.teacher-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-badge--cyan {
+  background: rgba(6, 182, 212, 0.12);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.teacher-badge--purple {
+  background: rgba(124, 58, 237, 0.12);
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+/* Hero card */
+.guild-hero {
+  position: relative;
+  background: #16112e;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.guild-hero__bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(6, 182, 212, 0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.guild-hero__icon {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 5rem;
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+}
+
+.guild-hero__body {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem;
+}
+
+.guild-hero__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.guild-hero__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e8e0f8;
+  margin: 0;
+}
+
+.guild-hero__teacher {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  margin: 0 0 1rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.guild-hero__stats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.guild-hero__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.guild-hero__stat strong {
+  font-weight: 700;
+}
+
+.guild-hero__stat--mana {
+  color: #67e8f9;
+}
+
+.guild-hero__stat--grim {
+  color: #c4b5fd;
+}
+
+.guild-hero__stat--spell {
+  color: #d4a017;
+}
+
+.guild-hero__stat--prog {
+  color: #86efac;
+}
+
+/* Reusable card */
+.teacher-card {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.teacher-card--gold {
+  border-color: rgba(212, 160, 23, 0.25);
+}
+
+.teacher-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.teacher-card__title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e8e0f8;
+}
+
+.teacher-card__title--gold {
+  color: #f0c040;
+}
+
+.teacher-card__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.teacher-card__sub {
+  font-size: 0.7rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-card__count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-card__body {
+  padding: 0.5rem 0;
+}
+
+.teacher-card__body--divide > * + * {
+  border-top: 1px solid rgba(124, 58, 237, 0.08);
+}
+
+/* Ranking row */
+.guild-rank-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  transition: background 0.15s;
+}
+
+.guild-rank-row:hover {
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.guild-rank-row__pos {
+  width: 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+}
+
+.guild-rank-row__pos--gold { color: #d4a017; }
+.guild-rank-row__pos--silver { color: #9ca3af; }
+.guild-rank-row__pos--bronze { color: #b87333; }
+.guild-rank-row__pos--default { color: #4a3d7a; }
+
+.guild-rank-row__avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4c1d95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  color: #e8e0f8;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.guild-rank-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.guild-rank-row__name {
+  font-size: 0.8125rem;
+  color: #e8e0f8;
+  margin: 0 0 0.25rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guild-rank-row__bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guild-rank-row__pct {
+  font-size: 0.625rem;
+  color: #8b7db8;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+}
+
+.guild-rank-row__mana {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.guild-rank-row__mana-val {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #67e8f9;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+}
+
+.guild-rank-row__mana-label {
+  font-size: 0.5625rem;
+  color: #4a3d7a;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Foe card */
+.guild-foe-bar {
+  margin-bottom: 0.5rem;
+}
+
+.guild-foe-bar__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin-bottom: 0.375rem;
+}
+
+.guild-foe-sub {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.guild-foe-sub__num {
+  color: #f0c040;
+  font-weight: 700;
+}
+
+.guild-foe-recent {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(212, 160, 23, 0.15);
+}
+
+.guild-foe-recent__title {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a3d7a;
+  font-family: 'Courier New', monospace;
+  margin: 0 0 0.5rem;
+}
+
+.guild-foe-recent__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding: 0.25rem 0;
+}
+
+.guild-foe-recent__row span:first-child {
+  color: #8b7db8;
+}
+
+.guild-foe-recent__dano {
+  color: #d4a017;
+  font-weight: 600;
+}
+
+/* Guild student table */
+.guild-table__header {
+  display: grid;
+  grid-template-columns: 2fr 60px 80px 80px 80px 1fr;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a3d7a;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.08);
+  font-family: 'Courier New', monospace;
+}
+
+.guild-table__row {
+  display: grid;
+  grid-template-columns: 2fr 60px 80px 80px 80px 1fr;
+  padding: 0.625rem 1.25rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.07);
+  transition: background 0.15s;
+}
+
+.guild-table__row:last-child {
+  border-bottom: none;
+}
+
+.guild-table__row:hover {
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.guild-table__cell {
+  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.guild-table__cell--name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e8e0f8;
+  min-width: 0;
+}
+
+.guild-table__avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4c1d95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  color: #e8e0f8;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.guild-table__cell--num {
+  color: #c4b5fd;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.guild-table__cell--mana {
+  color: #67e8f9;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.guild-table__cell--bar {
+  padding-right: 0.75rem;
+}

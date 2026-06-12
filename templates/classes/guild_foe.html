@@ -15,8 +15,14 @@
                 <p>{{ current_foe.foe.description }}</p>
 
                 <p><strong>Progresso:</strong> {{ current_foe.progress_percent|floatformat:1 }}%</p>
-                <p><strong>Mana contribuída:</strong> {{ current_foe.total_mana_contributed }}</p>
-                <p><strong>Mana restante:</strong> {{ current_foe.mana_remaining }}</p>
+                <p>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  <strong>Mana contribuída:</strong> {{ current_foe.total_mana_contributed }}
+                </p>
+                <p>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  <strong>Mana restante:</strong> {{ current_foe.mana_remaining }}
+                </p>
             </article>
         {% else %}
             <p>Todos os inimigos foram derrotados! 🎉</p>

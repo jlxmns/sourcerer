@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from django.utils.crypto import get_random_string
 
 from core.models import TimeStampedModel
@@ -15,6 +16,16 @@ class Guild(models.Model):
         on_delete=models.CASCADE,
         related_name='headed_guilds'
     )
+    is_active = models.BooleanField(
+        default=True,
+        help_text='Se falso, a guilda não aparece no painel do professor'
+    )
+    teachers = models.ManyToManyField(
+        'accounts.TeacherProfile',
+        blank=True,
+        related_name='guilds',
+        help_text='Professores associados a esta guilda (além do head teacher)'
+    )
 
     class Meta:
         verbose_name = 'Guilda'
@@ -27,6 +38,11 @@ class Guild(models.Model):
 
     def student_count(self):
         return self.memberships.count()
+
+    def total_mana(self):
+        return self.memberships.aggregate(
+            total=Sum('student__mana')
+        )['total'] or 0
 
     def current_foe(self):
         return self.foe_progresses.filter(defeated=False).select_related('foe').first()
@@ -69,6 +85,13 @@ class PowerfulFoe(models.Model):
     description = models.TextField(blank=True)
     order = models.PositiveIntegerField(
         unique=True, help_text='Ordem de aparição (menor = enfrentado primeiro)'
+    )
+    badge = models.ForeignKey(
+        'content.Badge',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='powerful_foes',
+        help_text='Distintivo concedido a todos os membros ao derrotar este inimigo'
     )
 
     class Meta:

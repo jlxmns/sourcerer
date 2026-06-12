@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load grimoire_extras %}
 
 {% block title %}{{ spell.title }}{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'css/student.css' %}">
+  <script src="{% static 'blockly/blockly_compressed.js' %}"></script>
+  <script src="{% static 'blockly/blocks_compressed.js' %}"></script>
+  <script src="{% static 'blockly/python_compressed.js' %}"></script>
+  <script src="{% static 'blockly/pt-br.js' %}"></script>
 {% endblock %}
 
 {% block body_class %}student-page{% endblock %}
@@ -13,50 +18,231 @@
   {% include 'components/student_header.html' %}
 
   <div class="student-layout">
-    <div class="student-layout__sidebar">
-      {% include 'components/student_sidebar.html' %}
-    </div>
-
-    <main class="student-layout__main">
-      <nav style="margin-bottom:1rem">
-        <a href="{% url 'content:grimoire_detail' spell.grimoire.pk %}" style="font-size:0.8125rem;color:#8b7db8;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#c4b5fd'" onmouseout="this.style.color='#8b7db8'">← Voltar para o Grimório</a>
-      </nav>
-
-      <h1 style="font-family:'Cinzel',serif;font-size:1.5rem;color:#e8e0f8;margin-bottom:0.5rem">{{ spell.title }}</h1>
-      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;font-size:0.875rem">
-        <span style="color:#8b7db8">Dificuldade: <strong style="color:#c4b5fd">{{ spell.get_difficulty_display }}</strong></span>
-        <span style="color:#8b7db8">Mana: <strong style="color:#67e8f9">+{{ spell.mana_reward }}</strong></span>
-      </div>
-
-      <section style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem;margin-bottom:1.5rem">
-        <h2 style="font-family:'Cinzel',serif;font-size:1rem;color:#e8e0f8;margin-bottom:0.75rem">Descrição</h2>
-        <div style="font-size:0.875rem;color:#c4b5fd;line-height:1.625">{{ spell.description|linebreaks }}</div>
-      </section>
-
+    <main class="student-layout__main" style="padding:0">
       {% if completion %}
-        <div style="background:#16112e;border:1px solid rgba(34,197,94,0.3);border-radius:0.75rem;padding:1.5rem;text-align:center">
-          <div style="font-size:2rem;margin-bottom:0.5rem">✅</div>
-          <p style="color:#86efac;font-weight:600;margin-bottom:0.25rem">Feitiço completado!</p>
-          <p style="font-size:0.8125rem;color:#8b7db8">Você já domina este feitiço.</p>
+        <div class="spell-detail__completed">
+          <span class="spell-detail__completed-icon" aria-hidden="true">✅</span>
+          <p class="spell-detail__completed-text">Feitiço completado!</p>
+          <p class="spell-detail__completed-sub">Você já domina este feitiço.</p>
         </div>
       {% else %}
-        <section style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem">
-          <h2 style="font-family:'Cinzel',serif;font-size:1rem;color:#e8e0f8;margin-bottom:0.75rem">Resolver</h2>
-          <p style="font-size:0.8125rem;color:#8b7db8;margin-bottom:1rem">Monte sua solução e envie abaixo.</p>
-          <form id="spell-form" method="post" action="{% url 'content:spell_submit' spell.pk %}">
-            {% csrf_token %}
-            <div class="form-group">
-              <label class="form-group__label" for="code">Código</label>
-              <div class="input-wrapper">
-                <textarea id="code" name="code" rows="10" class="form-input" style="padding-left:0.75rem;font-family:'Courier New',monospace;resize:vertical" placeholder="Insira seu código Blockly aqui..."></textarea>
+        <div class="spell-detail">
+          <div class="spell-detail__context-bar">
+            <a href="{% url 'content:grimoire_detail' spell.grimoire.pk %}" class="spell-detail__breadcrumb">
+              {% grimoire_icon 'arrow-left' size=14 classes='spell-detail__breadcrumb-icon' %}
+              <span>{{ spell.grimoire.title }}</span>
+            </a>
+            <span class="spell-detail__breadcrumb-sep" aria-hidden="true">/</span>
+            <span class="spell-detail__breadcrumb-current">{{ spell.title }}</span>
+
+            <div class="spell-detail__context-meta">
+              <span class="grimorio-detail__spell-difficulty
+                {% if spell.difficulty == 'easy' %}grimorio-detail__spell-difficulty--easy
+                {% elif spell.difficulty == 'medium' %}grimorio-detail__spell-difficulty--medium
+                {% else %}grimorio-detail__spell-difficulty--hard{% endif %}">
+                {{ spell.get_difficulty_display }}
+              </span>
+              <span class="spell-detail__context-meta-item spell-detail__context-meta-item--mana">
+                {% grimoire_icon 'zap' size=13 classes='spell-detail__context-meta-icon' %}
+                <span id="spell-mana-display">+{{ spell.mana_reward }}</span>
+              </span>
+              {% if spell_index and total_spells %}
+                <span class="spell-detail__context-meta-item spell-detail__context-meta-item--index">
+                  Feitiço {{ spell_index }} de {{ total_spells }}
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="spell-detail__body">
+            <div class="spell-detail__panel-left">
+              <div class="spell-detail__desc-section">
+                <div class="spell-detail__desc-header">
+                  <div class="spell-detail__desc-icon" aria-hidden="true">🔀</div>
+                  <h1 class="spell-detail__desc-title">{{ spell.title }}</h1>
+                </div>
+                <div class="spell-detail__desc-text">{{ spell.description|linebreaks }}</div>
+              </div>
+
+              {% if spell.tip %}
+                <div class="spell-detail__tip-section">
+                  <button class="spell-detail__tip-toggle" id="tip-toggle" aria-expanded="false" aria-controls="tip-content">
+                    {% grimoire_icon 'lightbulb' size=14 classes='spell-detail__tip-toggle-icon' %}
+                    <span id="tip-toggle-text">Mostrar dica</span>
+                  </button>
+                  <div class="spell-detail__tip-content" id="tip-content" hidden>
+                    <div class="spell-detail__tip-body">{{ spell.tip|linebreaks }}</div>
+                  </div>
+                </div>
+              {% endif %}
+
+              <div class="spell-detail__reward">
+                <p class="spell-detail__reward-label">Recompensa ao concluir</p>
+                <div class="spell-detail__reward-items">
+                  <span class="spell-detail__reward-item spell-detail__reward-item--mana">
+                    {% grimoire_icon 'zap' size=14 classes='spell-detail__reward-item-icon' %}
+                    <span id="reward-mana">+{{ spell.mana_reward }}</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="spell-detail__feedback">
+                <div class="spell-detail__feedback-card spell-detail__feedback--idle" id="feedback-area">
+                  <p class="spell-detail__feedback-text">Execute seu feitiço para ver o resultado aqui.</p>
+                </div>
               </div>
             </div>
-            <button type="submit" class="btn-submit" style="max-width:16rem">
-              Enviar Solução
-            </button>
-          </form>
-        </section>
+
+            <div class="spell-detail__panel-right">
+              <div class="spell-detail__toolbar">
+                <button class="spell-detail__toolbar-btn spell-detail__toolbar-btn--primary" id="btn-executar" onclick="executar()">
+                  {% grimoire_icon 'play' size=14 classes='spell-detail__toolbar-btn-icon' %}
+                  Executar
+                </button>
+                <button class="spell-detail__toolbar-btn spell-detail__toolbar-btn--ghost" id="btn-reiniciar" onclick="reiniciar()">
+                  {% grimoire_icon 'rotate-ccw' size=14 classes='spell-detail__toolbar-btn-icon' %}
+                  Reiniciar
+                </button>
+              </div>
+
+              <div class="spell-detail__workspace">
+                <div class="spell-detail__workspace-grid" aria-hidden="true"></div>
+                <div class="spell-detail__workspace-inner" id="blockly-workspace"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       {% endif %}
     </main>
   </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  var tipUsed = false;
+
+  {% if spell.tip %}
+  document.getElementById('tip-toggle').addEventListener('click', function() {
+    var content = document.getElementById('tip-content');
+    var text = document.getElementById('tip-toggle-text');
+    var expanded = this.getAttribute('aria-expanded') === 'true';
+    content.hidden = expanded;
+    this.setAttribute('aria-expanded', !expanded);
+    text.textContent = expanded ? 'Mostrar dica' : 'Esconder dica';
+    tipUsed = !expanded;
+    updateManaDisplay();
+  });
+  {% endif %}
+
+  function updateManaDisplay() {
+    var baseMana = {{ spell.mana_reward }};
+    var display = tipUsed ? Math.floor(baseMana * 0.8) : baseMana;
+    var manaEls = document.querySelectorAll('#spell-mana-display, #reward-mana');
+    manaEls.forEach(function(el) { el.textContent = '+' + display; });
+  }
+
+  var toolbox = {{ blockly_config|safe|default:'null' }};
+  var workspace = null;
+  var grimoireUrl = '{% url "content:grimoire_detail" spell.grimoire.pk %}';
+
+  function initBlockly() {
+    var el = document.getElementById('blockly-workspace');
+    if (!el) return;
+    try {
+      workspace = Blockly.inject(el, {
+        toolbox: toolbox || undefined,
+        grid: { spacing: 32, length: 1, colour: 'rgba(124,58,237,0.04)', snap: true },
+        zoom: { controls: true, wheel: true, startScale: 0.9 },
+        trashcan: true,
+        renderer: 'zelos',
+      });
+    } catch (e) {
+      console.warn('Blockly init failed:', e);
+      el.innerHTML = '<div class="spell-detail__feedback-card spell-detail__feedback--idle" style="margin:2rem"><p class="spell-detail__feedback-text">Falha ao carregar o editor Blockly.</p></div>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initBlockly);
+
+  function getBlocklyData() {
+    var xml = Blockly.Xml.workspaceToDom(workspace);
+    var xmlText = Blockly.Xml.domToText(xml);
+    var code = Blockly.Python.workspaceToCode(workspace);
+    return { blockly_xml: xmlText, generated_code: code, tip_used: tipUsed.toString() };
+  }
+
+  function setFeedback(state, data) {
+    var area = document.getElementById('feedback-area');
+    if (!area) return;
+    var html = '';
+    if (state === 'running') {
+      html = '<div class="spell-detail__feedback-card spell-detail__feedback--running">'
+        + '<div class="spell-detail__feedback-running-row">'
+        + '<div class="spell-detail__feedback-spinner" aria-hidden="true"></div>'
+        + '<span class="spell-detail__feedback-running-text">Executando feitiço…</span>'
+        + '</div></div>';
+    } else if (state === 'success') {
+      var overlay = document.createElement('div');
+      overlay.className = 'spell-modal';
+      overlay.innerHTML = '<div class="spell-modal__backdrop"></div>'
+        + '<div class="spell-modal__card" role="dialog" aria-modal="true" aria-labelledby="spell-modal-title">'
+        + '<div class="spell-modal__check">'
+        + '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        + '</div>'
+        + '<h2 class="spell-modal__title" id="spell-modal-title">Feitiço correto!</h2>'
+        + '<p class="spell-modal__reward">'
+        + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>'
+        + ' +<strong>' + (data && data.mana_gained ? data.mana_gained : 0) + '</strong> Mana</p>'
+        + '<p class="spell-modal__stats">Total: ' + (data && data.total_mana ? data.total_mana : 0) + ' Mana · Nível ' + (data && data.level ? data.level : 1) + '</p>'
+        + '<a href="' + grimoireUrl + '" class="spell-modal__btn">Voltar ao Grimório</a>'
+        + '</div>';
+      document.body.appendChild(overlay);
+      return;
+    } else if (state === 'error') {
+      html = '<div class="spell-detail__feedback-card spell-detail__feedback--error">'
+        + '<div class="spell-detail__feedback-header">'
+        + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+        + '<p class="spell-detail__feedback-title">Feitiço com erro</p>'
+        + '</div>'
+        + '<p class="spell-detail__feedback-body">' + (data && data.error ? data.error : 'Erro desconhecido') + '</p></div>';
+    }
+    area.outerHTML = '<div id="feedback-area">' + html + '</div>';
+  }
+
+  function executar() {
+    if (!workspace) return;
+    setFeedback('running');
+    var data = getBlocklyData();
+    data.action = 'execute';
+    fetch('{% url "content:spell_submit" spell.pk %}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify(data),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (json.success) {
+        setFeedback('success', json);
+      } else {
+        setFeedback('error', json);
+      }
+    })
+    .catch(function() {
+      setFeedback('error', { error: 'Erro de conexão com o servidor.' });
+    });
+  }
+
+  function reiniciar() {
+    if (!workspace) return;
+    workspace.clear();
+    setFeedback('idle');
+  }
+
+  function getCookie(name) {
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+  }
+</script>
 {% endblock %}

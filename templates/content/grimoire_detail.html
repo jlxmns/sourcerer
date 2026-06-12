@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load grimoire_extras %}
 
 {% block title %}{{ grimoire.title }}{% endblock %}
 
@@ -18,43 +19,175 @@
     </div>
 
     <main class="student-layout__main">
-      <nav style="margin-bottom:1rem">
-        <a href="{% url 'content:grimoire_list' %}" style="font-size:0.8125rem;color:#8b7db8;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#c4b5fd'" onmouseout="this.style.color='#8b7db8'">← Voltar para Grimórios</a>
-      </nav>
 
-      <h1 style="font-family:'Cinzel',serif;font-size:1.5rem;color:#e8e0f8;margin-bottom:0.5rem">{{ grimoire.title }}</h1>
-      <p style="font-size:0.875rem;color:#8b7db8;margin-bottom:0.75rem">
-        Progresso: <strong style="color:#d4a017">{{ progress }}</strong>
-        {% if grimoire.badge %}
-          — <span style="color:#c4b5fd">Distintivo: {{ grimoire.badge.name }}</span>
-        {% endif %}
-      </p>
+      <div class="grimorio-detail__hero">
+        <div class="grimorio-detail__hero-bg" aria-hidden="true"></div>
+        <div class="grimorio-detail__hero-decoration" aria-hidden="true">
+          {% grimoire_icon grimoire.icon size=180 %}
+        </div>
 
-      <section style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem;margin-bottom:1.5rem">
-        <h2 style="font-family:'Cinzel',serif;font-size:1rem;color:#e8e0f8;margin-bottom:0.75rem">Conteúdo</h2>
-        <div style="font-size:0.875rem;color:#c4b5fd;line-height:1.625">{{ grimoire.text_content|linebreaks }}</div>
-      </section>
-
-      <section style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem">
-        <h2 style="font-family:'Cinzel',serif;font-size:1rem;color:#e8e0f8;margin-bottom:1rem">Feitiços</h2>
-        <div style="display:flex;flex-direction:column;gap:0.75rem">
-          {% for data in spells_data %}
-            <a href="{% url 'content:spell_detail' data.spell.pk %}" style="display:flex;align-items:center;gap:0.75rem;background:#1e1540;border:1px solid rgba(124,58,237,0.15);border-radius:0.5rem;padding:0.75rem 1rem;text-decoration:none;transition:background 0.15s" onmouseover="this.style.background='#2a1e50'" onmouseout="this.style.background='#1e1540'">
-              <span style="flex:1">
-                <strong style="display:block;font-size:0.875rem;color:#c4b5fd;margin-bottom:0.125rem">{{ data.spell.title }}</strong>
-                <span style="font-size:0.75rem;color:#8b7db8">{{ data.spell.get_difficulty_display }} · +{{ data.spell.mana_reward }} mana</span>
-              </span>
-              {% if data.completed %}
-                <span style="font-size:1rem;color:#86efac">✓</span>
-              {% else %}
-                <span style="font-size:0.75rem;color:#7c3aed;font-weight:600">Iniciar</span>
-              {% endif %}
+        <div class="grimorio-detail__hero-inner">
+          <nav class="grimorio-detail__nav">
+            <a href="{% url 'dashboard:student_dashboard' %}" class="grimorio-detail__nav-link" aria-label="Voltar ao painel principal">
+              {% grimoire_icon 'arrow-left' size=15 classes='grimorio-detail__nav-icon' %}
+              <span>Voltar aos grimórios</span>
             </a>
+          </nav>
+
+          <div class="grimorio-detail__hero-body">
+            <div class="grimorio-detail__hero-icon" aria-hidden="true">
+              {% grimoire_icon grimoire.icon size=32 %}
+            </div>
+
+            <div class="grimorio-detail__hero-info">
+              <div class="grimorio-detail__hero-title-row">
+                <h1 class="grimorio-detail__hero-title">{{ grimoire.title }}</h1>
+                {% if not has_optional_spells %}
+                  <span class="grimorio-detail__hero-required-badge">Obrigatório</span>
+                {% endif %}
+              </div>
+              <p class="grimorio-detail__hero-desc">{{ grimoire.description }}</p>
+
+              <div class="grimorio-detail__hero-metrics">
+                <span class="grimorio-detail__hero-metric grimorio-detail__hero-metric--spells">
+                  {% grimoire_icon 'book-open' size=14 classes='grimorio-detail__metric-icon' %}
+                  <span class="grimorio-detail__metric-label">{{ completed_required }}/{{ required_total }} feitiços</span>
+                </span>
+                <span class="grimorio-detail__hero-metric grimorio-detail__hero-metric--mana">
+                  {% grimoire_icon 'zap' size=14 classes='grimorio-detail__metric-icon' %}
+                  <span class="grimorio-detail__metric-label">{{ earned_xp }}{% if bonus_mana %} (<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="bonus-amount">{{ bonus_mana }}</span>){% endif %} / {{ total_xp }} Mana</span>
+                </span>
+                {% if bonus_mana %}
+                  <p class="grimorio-detail__bonus"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Bônus de conclusão: +{{ bonus_mana }} Mana</p>
+                {% endif %}
+                {% if available_badge_count > 0 %}
+                  <span class="grimorio-detail__hero-metric grimorio-detail__hero-metric--badges">
+                    {% grimoire_icon 'trophy' size=14 classes='grimorio-detail__metric-icon' %}
+                    <span class="grimorio-detail__metric-label">{{ available_badge_count }} badge{{ available_badge_count|pluralize:"s" }} disponíve{{ available_badge_count|pluralize:"l,is" }}</span>
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="grimorio-detail__hero-progress">
+              <div class="grimorio-detail__hero-pct">{{ progress_pct }}%</div>
+              <div class="grimorio-detail__hero-pct-label">concluído</div>
+              <div class="grimorio-detail__hero-bar" role="progressbar" aria-valuenow="{{ progress_pct }}" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do grimório">
+                <div class="grimorio-detail__hero-bar-fill" style="width:{{ progress_pct }}%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grimorio-detail__spell-section">
+        <div class="grimorio-detail__spell-heading">
+          <h2 class="grimorio-detail__spell-heading-title">Feitiços do Grimório</h2>
+          <div class="grimorio-detail__spell-legend">
+            <span class="grimorio-detail__spell-legend-item">
+              {% grimoire_icon 'check-circle' size=12 classes='grimorio-detail__spell-legend-icon' %}
+              <span class="grimorio-detail__spell-legend-label">Concluído</span>
+            </span>
+            <span class="grimorio-detail__spell-legend-item">
+              <span class="grimorio-detail__spell-legend-dot" aria-hidden="true"></span>
+              <span class="grimorio-detail__spell-legend-label">Em progresso</span>
+            </span>
+            <span class="grimorio-detail__spell-legend-item">
+              {% grimoire_icon 'lock' size=12 classes='grimorio-detail__spell-legend-icon' %}
+              <span class="grimorio-detail__spell-legend-label">Bloqueado</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="grimorio-detail__spells">
+          {% for data in spells_data %}
+            {% with spell=data.spell %}
+              {% if data.status != 'blocked' %}
+                <a href="{% url 'content:spell_detail' spell.pk %}" class="grimorio-detail__spell-row
+                  {% if data.status == 'completed' %} grimorio-detail__spell-row--completed
+                  {% elif data.status == 'in_progress' %} grimorio-detail__spell-row--in-progress
+                  {% else %} grimorio-detail__spell-row--available{% endif %}">
+              {% else %}
+                <div class="grimorio-detail__spell-row grimorio-detail__spell-row--blocked" aria-disabled="true">
+              {% endif %}
+
+                <div class="grimorio-detail__spell-status-icon" aria-hidden="true">
+                  {% if data.status == 'completed' %}
+                    {% grimoire_icon 'check-circle' size=20 %}
+                  {% elif data.status == 'blocked' %}
+                    {% grimoire_icon 'lock' size=16 %}
+                  {% elif data.status == 'in_progress' %}
+                    <span class="grimorio-detail__spell-partial" aria-hidden="true">
+                      <span class="grimorio-detail__spell-partial-dot"></span>
+                    </span>
+                  {% else %}
+                    <span class="grimorio-detail__spell-number">{{ forloop.counter|stringformat:"02d" }}</span>
+                  {% endif %}
+                </div>
+
+                <div class="grimorio-detail__spell-content">
+                  <div class="grimorio-detail__spell-label">
+                    <span class="grimorio-detail__spell-name
+                      {% if data.status == 'completed' %}grimorio-detail__spell-name--completed
+                      {% elif data.status == 'blocked' %}grimorio-detail__spell-name--blocked
+                      {% else %}grimorio-detail__spell-name--active{% endif %}">
+                      {{ spell.title }}
+                    </span>
+                    {% if data.status == 'in_progress' %}
+                      <span class="grimorio-detail__spell-tag grimorio-detail__spell-tag--progress">Em andamento</span>
+                    {% endif %}
+                    {% if data.has_badge and data.status != 'blocked' %}
+                      <span class="grimorio-detail__spell-tag grimorio-detail__spell-tag--badge{% if data.badge_earned %} grimorio-detail__spell-tag--earned{% endif %}">
+                        {% if data.badge_earned %}✓{% endif %}
+                        {{ spell.badge.name }}
+                      </span>
+                    {% endif %}
+                  </div>
+                  <p class="grimorio-detail__spell-desc
+                    {% if data.status == 'blocked' %}grimorio-detail__spell-desc--blocked{% endif %}">
+                    {{ spell.description }}
+                  </p>
+                </div>
+
+                <div class="grimorio-detail__spell-meta">
+                  <span class="grimorio-detail__spell-difficulty
+                    {% if spell.difficulty == 'easy' %}grimorio-detail__spell-difficulty--easy
+                    {% elif spell.difficulty == 'medium' %}grimorio-detail__spell-difficulty--medium
+                    {% else %}grimorio-detail__spell-difficulty--hard{% endif %}">
+                    {{ spell.get_difficulty_display }}
+                  </span>
+
+                  <span class="grimorio-detail__spell-mana
+                    {% if data.status == 'blocked' %}grimorio-detail__spell-mana--blocked{% endif %}">
+                    {% grimoire_icon 'zap' size=11 classes='grimorio-detail__spell-mana-icon' %}
+                    <span>+{{ spell.mana_reward }}</span>
+                  </span>
+
+                  <span class="grimorio-detail__spell-required-badge
+                    {% if spell.is_required %}grimorio-detail__spell-required-badge--required
+                    {% else %}grimorio-detail__spell-required-badge--optional{% endif %}">
+                    {{ spell.is_required|yesno:"Obrigatório,Opcional" }}
+                  </span>
+
+                  {% if data.status != 'blocked' %}
+                    <span class="grimorio-detail__spell-chevron" aria-hidden="true">
+                      {% grimoire_icon 'chevron-right' size=16 %}
+                    </span>
+                  {% endif %}
+                </div>
+
+              {% if data.status != 'blocked' %}
+                </a>
+              {% else %}
+                </div>
+              {% endif %}
+            {% endwith %}
           {% empty %}
-            <p style="color:#8b7db8;font-size:0.875rem">Nenhum feitiço neste grimório ainda.</p>
+            <p class="grimorio-detail__empty">Nenhum feitiço neste grimório ainda.</p>
           {% endfor %}
         </div>
-      </section>
+      </div>
+
     </main>
   </div>
 {% endblock %}

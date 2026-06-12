@@ -162,6 +162,15 @@ wheels = [
 ]
 
 [[package]]
+name = "restrictedpython"
+version = "8.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/97/04/7314639eab9edd57b5c8f6e158a558f5a5a65453c37a51fb8f9ecc1d112e/restrictedpython-8.2.tar.gz", hash = "sha256:b835c2ff87d71b76f6d8b129096cc5a1e893bf01839ab802ba47a4129f1bdfe4", size = 449323, upload-time = "2026-05-29T06:27:57.285Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/35/59/b2778bfafcc37fdfd87c02702bbfc5753c58c28c7eb82999b7b49ec6e0e7/restrictedpython-8.2-py3-none-any.whl", hash = "sha256:6ff69e2fe06674bfe88943f17f2ce8353a9bc743ee37ea7bec38ff8b4851afd1", size = 27176, upload-time = "2026-05-29T06:27:55.651Z" },
+]
+
+[[package]]
 name = "sourcerer"
 version = "0.1.0"
 source = { virtual = "." }
@@ -170,6 +179,7 @@ dependencies = [
     { name = "pillow" },
     { name = "psycopg", extra = ["binary"] },
     { name = "python-dotenv" },
+    { name = "restrictedpython" },
 ]
 
 [package.metadata]
@@ -178,6 +188,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=12.2.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.4" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
+    { name = "restrictedpython", specifier = ">=8.2" },
 ]
 
 [[package]]

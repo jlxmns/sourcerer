@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from content.models import Badge
 from classes.models import PowerfulFoe
 
 
@@ -6,28 +7,68 @@ class Command(BaseCommand):
     help = 'Popula dados iniciais de classes (poderosos inimigos)'
 
     def handle(self, *args, **options):
-        self._create_foes()
+        self._create_foes_and_badges()
         self.stdout.write(self.style.SUCCESS('Dados de classes criados com sucesso!'))
 
-    def _create_foes(self):
+    def _create_foes_and_badges(self):
         foes_data = [
-            {'name': 'Goblin das Sombras', 'hp': 10,
-             'description': 'Um pequeno goblin que rouba mana dos iniciantes.', 'order': 1},
-            {'name': 'Esqueleto Guardião', 'hp': 25,
-             'description': 'Um esqueleto que guarda os segredos da torre.', 'order': 2},
-            {'name': 'Golem de Pedra', 'hp': 50,
-             'description': 'Uma enorme criatura de pedra que exige força coletiva.', 'order': 3},
-            {'name': 'Dragão de Fogo', 'hp': 100,
-             'description': 'Um temível dragão que só pode ser derrotado com união.', 'order': 4},
-            {'name': 'Lich das Profundezas', 'hp': 200,
-             'description': 'Um lich ancestral que drena a mana de guildas inteiras.', 'order': 5},
-            {'name': 'Titã Celestial', 'hp': 500,
-             'description': 'A maior ameaça já registrada. Apenas guildas lendárias o derrotaram.', 'order': 6},
+            {
+                'name': 'Slime das Sombras',
+                'hp': 10,
+                'description': 'Um pequeno slime que drena a mana de feiticeiros iniciantes.',
+                'order': 1,
+            },
+            {
+                'name': 'Lobo da Neblina',
+                'hp': 20,
+                'description': 'Um lobo espectral que caça em bando nas florestas encantadas.',
+                'order': 2,
+            },
+            {
+                'name': 'Gárgula Vigilante',
+                'hp': 30,
+                'description': 'Uma gárgula desperta por magia antiga, guardiã de torres arcanas.',
+                'order': 3,
+            },
+            {
+                'name': 'Basilisco Pétreo',
+                'hp': 40,
+                'description': 'Criatura com olhar paralisante que transforma seus inimigos em pedra.',
+                'order': 4,
+            },
+            {
+                'name': 'Fênix Rubra',
+                'hp': 100,
+                'description': 'Ave lendária que renasce das próprias cinzas. Exige o poder máximo da guilda.',
+                'order': 5,
+            },
         ]
 
         for data in foes_data:
-            PowerfulFoe.objects.get_or_create(
-                order=data['order'],
-                defaults=data
+            badge, _ = Badge.objects.get_or_create(
+                name=f'Derrotou {data["name"]}',
+                defaults={
+                    'description': f'Derrote o {data["name"]} junto com sua guilda.',
+                    'condition_type': Badge.ConditionType.FOE_DEFEATED,
+                    'condition_value': str(data['order']),
+                },
             )
-            self.stdout.write(f'  Inimigo: {data["name"]} (HP: {data["hp"]})')
+            self.stdout.write(f'  Distintivo: {badge.name}')
+
+            foe, created = PowerfulFoe.objects.get_or_create(
+                order=data['order'],
+                defaults={
+                    'name': data['name'],
+                    'hp': data['hp'],
+                    'description': data['description'],
+                    'badge': badge,
+                },
+            )
+            if not created:
+                foe.name = data['name']
+                foe.hp = data['hp']
+                foe.description = data['description']
+                foe.badge = badge
+                foe.save()
+
+            self.stdout.write(f'  Inimigo: {foe.name} (HP: {foe.hp})')

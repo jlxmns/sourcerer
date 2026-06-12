@@ -1,37 +1,216 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Painel do Professor{% endblock %}
 
+{% block header %}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/teacher.css' %}">
+{% endblock %}
+
 {% block content %}
-    <section>
-        <h1>Painel do Arquimago</h1>
-        <p>Bem-vindo, {{ teacher.user.get_full_name|default:teacher.user.username }}!</p>
+<div class="teacher-layout">
+  {% include 'components/teacher_sidebar.html' %}
 
-        <article>
-            <h2>Criar Nova Guilda</h2>
-            <form action="{% url 'dashboard:create_guild' %}" method="post">
-                {% csrf_token %}
-                <label for="guild_name">Nome da Guilda:</label>
-                <input type="text" id="guild_name" name="name" required>
-                <button type="submit">Criar</button>
-            </form>
-        </article>
+  <div class="teacher-main-area">
+    {% include 'components/teacher_header.html' %}
 
-        <article>
-            <h2>Suas Guildas</h2>
-            {% if guilds %}
-                <ul>
-                    {% for guild in guilds %}
-                        <li>
-                            <a href="{% url 'dashboard:guild_detail' guild.pk %}">{{ guild.name }}</a>
-                            - Código: <strong>{{ guild.join_code }}</strong>
-                            - {{ guild.student_count }} aluno{{ guild.student_count|pluralize:'s' }}
-                        </li>
-                    {% endfor %}
-                </ul>
+    <main class="teacher-content">
+
+      <!-- Metrics cards -->
+      <div class="teacher-metrics">
+        <div class="teacher-metric">
+          <div class="teacher-metric__top">
+            <span class="teacher-metric__label">Alunos ativos</span>
+            <span class="teacher-metric__icon teacher-metric__icon--purple">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+          </div>
+          <p class="teacher-metric__value">{{ metrics.active_students }}</p>
+        </div>
+
+        <div class="teacher-metric">
+          <div class="teacher-metric__top">
+            <span class="teacher-metric__label">Guildas</span>
+            <span class="teacher-metric__icon teacher-metric__icon--cyan">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </span>
+          </div>
+          <p class="teacher-metric__value">{{ metrics.guild_count }}</p>
+        </div>
+
+        <div class="teacher-metric">
+          <div class="teacher-metric__top">
+            <span class="teacher-metric__label">Grimórios concluídos</span>
+            <span class="teacher-metric__icon teacher-metric__icon--pink">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </span>
+          </div>
+          <p class="teacher-metric__value">{{ metrics.completed_grimoires }}</p>
+        </div>
+
+        <div class="teacher-metric">
+          <div class="teacher-metric__top">
+            <span class="teacher-metric__label">Feitiços concluídos</span>
+            <span class="teacher-metric__icon teacher-metric__icon--gold">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
+          </div>
+          <p class="teacher-metric__value">{{ metrics.completed_spells }}</p>
+        </div>
+
+        <div class="teacher-metric">
+          <div class="teacher-metric__top">
+            <span class="teacher-metric__label">Badges conquistadas</span>
+            <span class="teacher-metric__icon teacher-metric__icon--green">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+            </span>
+          </div>
+          <p class="teacher-metric__value">{{ metrics.earned_badges }}</p>
+        </div>
+      </div>
+
+      <!-- Main row: table + sidebar -->
+      <div class="teacher-row">
+
+        <!-- Left: guild overview + student table -->
+        <div class="teacher-main-col">
+
+          <!-- Guild overview -->
+          <section class="teacher-section">
+            <div class="teacher-section__header">
+              <h2 class="teacher-section__title">Visão geral das Guildas</h2>
+              <a href="{% url 'dashboard:create_guild' %}" class="teacher-btn teacher-btn--sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nova Guilda
+              </a>
+            </div>
+
+            {% if guilds_data %}
+              <div class="teacher-guild-grid">
+                {% for g in guilds_data %}
+                  <a href="{% url 'dashboard:guild_detail' g.guild.pk %}" class="teacher-guild-card">
+                    <div class="teacher-guild-card__top">
+                      <div class="teacher-guild-card__info">
+                        <div class="teacher-guild-card__avatar">⚔️</div>
+                        <div>
+                          <p class="teacher-guild-card__name">{{ g.guild.name }}</p>
+                          <p class="teacher-guild-card__sub">{{ g.student_count }} alunos · Nível médio {{ g.average_level }}</p>
+                        </div>
+                      </div>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4a3d7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <div class="teacher-guild-card__bar">
+                      <div class="teacher-guild-card__fill" style="width:{{ g.progress }}%"></div>
+                    </div>
+                    <div class="teacher-guild-card__label">Progresso</div>
+                    <div class="teacher-guild-card__stats">
+                      <span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        {{ g.completed_grimoires }} grimórios
+                      </span>
+                      <span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        {{ g.completed_spells }} feitiços
+                      </span>
+                      <span class="teacher-guild-card__mana">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        {{ g.total_mana }} mana
+                      </span>
+                    </div>
+                  </a>
+                {% endfor %}
+              </div>
             {% else %}
-                <p>Você ainda não criou nenhuma guilda.</p>
+              <p class="teacher-empty">Nenhuma guilda ativa. Crie uma nova guilda para começar.</p>
             {% endif %}
-        </article>
-    </section>
+          </section>
+
+          <!-- Student table -->
+          <section class="teacher-section">
+            <div class="teacher-section__header">
+              <h2 class="teacher-section__title">Alunos — visão geral</h2>
+            </div>
+
+            {% if students_data %}
+              <div class="teacher-table">
+                <div class="teacher-table__header">
+                  <span>Aluno</span>
+                  <span>Guilda</span>
+                  <span>Nível</span>
+                  <span>Mana</span>
+                  <span>Grimórios</span>
+                  <span>Feitiços</span>
+                  <span>Progresso</span>
+                </div>
+                {% for s in students_data %}
+                  <div class="teacher-table__row">
+                    <div class="teacher-table__cell teacher-table__cell--name">
+                      <span class="teacher-table__avatar">{{ s.student.user.get_full_name|first|default:s.student.user.username|first }}</span>
+                      <span>{{ s.student.user.get_full_name|default:s.student.user.username }}</span>
+                    </div>
+                    <span class="teacher-table__cell teacher-table__cell--guild">{{ s.guild_name }}</span>
+                    <span class="teacher-table__cell teacher-table__cell--num">{{ s.level }}</span>
+                    <span class="teacher-table__cell teacher-table__cell--mana">{{ s.mana }}</span>
+                    <span class="teacher-table__cell teacher-table__cell--num">{{ s.grimoires_completed }}/{{ s.total_grimoires }}</span>
+                    <span class="teacher-table__cell teacher-table__cell--num">{{ s.spells_completed }}</span>
+                    <div class="teacher-table__cell teacher-table__cell--bar">
+                      <div class="teacher-bar">
+                        <div class="teacher-bar__fill
+                          {% if s.progress >= 70 %}teacher-bar__fill--purple
+                          {% elif s.progress >= 40 %}teacher-bar__fill--gold
+                          {% else %}teacher-bar__fill--cyan{% endif %}"
+                          style="width:{{ s.progress }}%"></div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="teacher-empty">Nenhum aluno cadastrado nas suas guildas.</p>
+            {% endif %}
+          </section>
+        </div>
+
+        <!-- Right sidebar -->
+        <aside class="teacher-sidebar-panel">
+          <div class="teacher-sidebar-card">
+            <div class="teacher-sidebar-card__header">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span class="teacher-sidebar-card__title">Atenção necessária</span>
+              <span class="teacher-sidebar-card__count">{{ alerts|length }}</span>
+            </div>
+            {% if alerts %}
+              <div class="teacher-sidebar-card__body">
+                {% for alert in alerts %}
+                  <div class="teacher-alert">
+                    <span class="teacher-alert__dot teacher-alert__dot--{{ alert.type }}"></span>
+                    <div>
+                      <p class="teacher-alert__name">{{ alert.student_name }}</p>
+                      <p class="teacher-alert__msg">{{ alert.message }}</p>
+                      <p class="teacher-alert__guild">{{ alert.guild_name }}</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="teacher-sidebar-card__body">
+                <p class="teacher-empty" style="padding:1rem">Todos os alunos estão em dia!</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="teacher-sidebar-card">
+            <p class="teacher-sidebar-card__subtitle">Ações rápidas</p>
+            <a href="{% url 'dashboard:create_guild' %}" class="teacher-action-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Criar nova guilda
+            </a>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
 {% endblock %}

@@ -18,26 +18,52 @@
     </div>
 
     <main class="student-layout__main">
-      <h1 style="font-family:'Cinzel',serif;font-size:1.5rem;color:#e8e0f8;margin-bottom:1.5rem">Grimórios</h1>
+      <h1 class="grimorio-list__title">Grimórios</h1>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:1rem">
+      <div class="grimorio-list__grid">
         {% for data in grimoires_data %}
-          <a href="{% url 'content:grimoire_detail' data.grimoire.pk %}" style="display:block;background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.25rem;text-decoration:none;transition:border-color 0.2s,box-shadow 0.2s" onmouseover="this.style.borderColor='#7c3aed';this.style.boxShadow='0 0 16px rgba(124,58,237,0.2)'" onmouseout="this.style.borderColor='rgba(124,58,237,0.2)';this.style.boxShadow='none'">
-            <h2 style="font-family:'Cinzel',serif;font-size:0.95rem;color:#c4b5fd;margin-bottom:0.75rem">{{ data.grimoire.title }}</h2>
-            <div style="height:0.5rem;background:#0d0a1e;border-radius:999px;overflow:hidden;margin-bottom:0.5rem">
-              <div style="height:100%;background:#7c3aed;border-radius:999px;width:{% widthratio data.completed data.total 100 %}%;box-shadow:0 0 8px rgba(124,58,237,0.5);transition:width 0.5s"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:0.75rem">
-              <span style="color:#8b7db8">{{ data.completed }}/{{ data.total }} feitiços</span>
-              {% if data.completed == data.total and data.total > 0 %}
-                <span style="color:#86efac;font-weight:600">Completo</span>
-              {% else %}
-                <span style="color:#d4a017;font-weight:600">{{ data.grimoire.mana_reward }} mana</span>
+          {% if data.status == 'blocked' %}
+            <div class="grimorio-list__card grimorio-list__card--blocked">
+          {% else %}
+            <a href="{% url 'content:grimoire_detail' data.grimoire.pk %}" class="grimorio-list__card">
+          {% endif %}
+
+            <h2 class="grimorio-list__card-title">
+              {{ data.grimoire.title }}
+              {% if data.status == 'blocked' %}
+                <span class="grimorio-list__blocked-tag">🔒 Bloqueado</span>
               {% endif %}
+            </h2>
+            {% if data.total > 0 %}
+              <div class="grimorio-list__progress">
+                <div class="grimorio-list__progress-fill" style="width:{% widthratio data.completed data.total 100 %}%"></div>
+              </div>
+              <div class="grimorio-list__labels">
+                <span class="grimorio-list__count">{{ data.completed }}/{{ data.total }} feitiços</span>
+                {% if data.status == 'completed' %}
+                  <span class="grimorio-list__status grimorio-list__status--complete">Completo</span>
+                {% elif data.status != 'blocked' %}
+                  <span class="grimorio-list__status grimorio-list__status--reward">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    {{ data.grimoire.mana_reward }} Mana
+                  </span>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if data.status == 'blocked' and data.unlock_requirements %}
+              <p class="grimorio-list__blocked-hint">
+                Complete primeiro: {{ data.unlock_requirements|join:", " }}
+              </p>
+            {% endif %}
+
+          {% if data.status == 'blocked' %}
             </div>
-          </a>
+          {% else %}
+            </a>
+          {% endif %}
         {% empty %}
-          <p style="color:#8b7db8;font-size:0.875rem;grid-column:1/-1">Nenhum grimório disponível ainda.</p>
+          <p class="grimorio-list__empty">Nenhum grimório disponível ainda.</p>
         {% endfor %}
       </div>
     </main>

@@ -10,17 +10,14 @@
   <div class="student-header__xp-section">
     <div class="student-header__xp-labels">
       <span class="student-header__level">Nível {{ student.level }}</span>
-      <span class="student-header__xp-num">{{ student.mana }} / 1500 XP</span>
+      <span class="student-header__xp-num">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        {{ student.mana }} Mana
+      </span>
     </div>
     <div class="student-header__xp-bar">
-      <div class="student-header__xp-fill" style="width:{% widthratio student.mana 1500 100 %}%"></div>
+      <div class="student-header__xp-fill" style="width:{{ student.level_progress_percent }}%"></div>
     </div>
-  </div>
-
-  <div class="student-header__mana">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    <span class="student-header__mana-value">{{ student.mana }}</span>
-    <span class="student-header__mana-label">mana</span>
   </div>
 
   <div class="student-header__badges">
@@ -83,3 +80,42 @@
     </div>
   </div>
 </header>
+
+<script>
+function getCookie(name) {
+  var value = '; ' + document.cookie;
+  var parts = value.split('; ' + name + '=');
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return '';
+}
+
+window.markNotificationRead = function(el) {
+  var id = el.dataset.id;
+  var url = el.getAttribute('href');
+  fetch('/notifications/ler/' + id + '/', {
+    method: 'POST',
+    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+  }).then(function() {
+    var dot = document.querySelector('.student-header__bell-dot');
+    if (dot) {
+      var count = parseInt(dot.textContent) - 1;
+      if (count <= 0) {
+        dot.remove();
+      } else {
+        dot.textContent = count;
+      }
+    }
+    window.location.href = url;
+  });
+};
+
+document.addEventListener('click', function(e) {
+  var dropdown = document.getElementById('notification-dropdown');
+  var bell = document.querySelector('.student-header__bell');
+  if (dropdown && bell && dropdown.classList.contains('notification-dropdown--open')) {
+    if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
+      dropdown.classList.remove('notification-dropdown--open');
+    }
+  }
+});
+</script>

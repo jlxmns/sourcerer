@@ -13,7 +13,10 @@
                         <th>#</th>
                         <th>Aluno</th>
                         <th>Nível</th>
-                        <th>Mana</th>
+                        <th>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                          Mana
+                        </th>
                         <th>Feitiços Completados</th>
                     </tr>
                 </thead>
@@ -23,7 +26,7 @@
                             <td>{{ data.position }}º</td>
                             <td>{{ data.student.user.get_full_name|default:data.student.user.username }}</td>
                             <td>{{ data.student.level }}</td>
-                            <td>{{ data.student.mana }}</td>
+                            <td class="mana-value">{{ data.student.mana }}</td>
                             <td>{{ data.total_completions }}</td>
                         </tr>
                     {% endfor %}

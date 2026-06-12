@@ -8,6 +8,10 @@ class Grimoire(models.Model):
     description = models.TextField(blank=True)
     text_content = models.TextField(help_text='Conteúdo teórico do grimório')
     order = models.PositiveIntegerField(unique=True)
+    icon = models.CharField(
+        max_length=50, default='book',
+        help_text='Nome do ícone Lucide para representar este grimório'
+    )
     mana_reward = models.PositiveIntegerField(
         default=50, help_text='Mana extra concedida ao completar todos os feitiços'
     )
@@ -38,24 +42,32 @@ class Grimoire(models.Model):
         spells_sum = self.spells.aggregate(total=models.Sum('mana_reward'))['total'] or 0
         return spells_sum + self.mana_reward
 
+    def required_spell_count(self):
+        return self.spells.filter(is_required=True).count()
+
+    def completed_required_count(self, student):
+        return SpellCompletion.objects.filter(
+            student=student,
+            spell__grimoire=self,
+            spell__is_required=True
+        ).values('spell').distinct().count()
+
+    def is_completed_by(self, student):
+        required = self.required_spell_count()
+        if required == 0:
+            return True
+        return self.completed_required_count(student) >= required
+
     def is_unlocked_for(self, student):
         for prereq in self.depends_on.all():
-            completed = SpellCompletion.objects.filter(
-                student=student,
-                spell__grimoire=prereq
-            ).values('spell').distinct().count()
-            if completed < prereq.spells.count():
+            if not prereq.is_completed_by(student):
                 return False
         return True
 
     def unlock_requirements(self, student):
         missing = []
         for prereq in self.depends_on.all():
-            completed = SpellCompletion.objects.filter(
-                student=student,
-                spell__grimoire=prereq
-            ).values('spell').distinct().count()
-            if completed < prereq.spells.count():
+            if not prereq.is_completed_by(student):
                 missing.append(prereq.title)
         return missing
 
@@ -80,6 +92,31 @@ class Spell(models.Model):
         Grimoire, on_delete=models.CASCADE, related_name='spells'
     )
     order = models.PositiveIntegerField()
+    is_required = models.BooleanField(
+        default=True,
+        help_text='Se desligado, o feitiço é opcional e não precisa ser completado para finalizar o grimório'
+    )
+    tip = models.TextField(
+        blank=True,
+        help_text='Dica opcional para ajudar o estudante a resolver o feitiço'
+    )
+    blockly_toolbox = models.JSONField(
+        blank=True, null=True,
+        help_text='Configuração JSON da toolbox do Blockly (categorias e blocos)'
+    )
+    expected_output = models.TextField(
+        blank=True,
+        help_text='Saída esperada para validação da solução'
+    )
+    required_block_types = models.JSONField(
+        blank=True, null=True,
+        help_text='Lista de tipos de bloco Blockly obrigatórios na solução'
+    )
+    alternative_block_types = models.JSONField(
+        blank=True, null=True,
+        help_text='Lista de grupos de tipos de bloco alternativos. '
+                  'Cada grupo é uma lista — pelo menos um bloco de cada grupo deve estar presente.'
+    )
     validation_data = models.JSONField(
         blank=True, null=True,
         help_text='Dados para validação da solução (ex: blocos esperados, saída esperada)'
@@ -118,6 +155,7 @@ class SpellCompletion(TimeStampedModel):
         Spell, on_delete=models.CASCADE, related_name='completions'
     )
     code_submitted = models.TextField(blank=True, help_text='Código Blockly submetido')
+    tip_used = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Feitiço Completado'
@@ -130,7 +168,10 @@ class SpellCompletion(TimeStampedModel):
         if is_new:
             from notifications.models import Notification
 
-            self.student.add_mana(self.spell.mana_reward)
+            mana_to_add = self.spell.mana_reward
+            if self.tip_used:
+                mana_to_add = int(mana_to_add * 0.8)
+            self.student.add_mana(mana_to_add)
 
             if self.spell.difficulty == Spell.Difficulty.HARD:
                 Notification.objects.create(
@@ -142,12 +183,7 @@ class SpellCompletion(TimeStampedModel):
                 )
 
             grimoire = self.spell.grimoire
-            completed_spells = SpellCompletion.objects.filter(
-                student=self.student,
-                spell__grimoire=grimoire
-            ).values_list('spell', flat=True).distinct().count()
-            total_spells = grimoire.spells.count()
-            if completed_spells >= total_spells:
+            if grimoire.is_completed_by(self.student):
                 self.student.add_mana(grimoire.mana_reward)
                 Notification.objects.create(
                     user=self.student.user,
@@ -182,6 +218,7 @@ class Badge(models.Model):
         HARD_SPELL_COMPLETE = 'hard_spell_complete', 'Completar um feitiço difícil'
         LEVEL_REACHED = 'level_reached', 'Alcançar nível N'
         MANA_REACHED = 'mana_reached', 'Acumular N de mana'
+        FOE_DEFEATED = 'foe_defeated', 'Derrotar um inimigo poderoso'
 
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='badges/', blank=True)

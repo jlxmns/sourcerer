@@ -162,3 +162,15 @@
 .terms-checkbox__link:hover {
   color: #a78bfa;
 }
+
+/* =============================================
+   Particle position modifiers
+   ============================================= */
+.register-hero__particle--p1 { top: 15%; left: 10%; }
+.register-hero__particle--p2 { top: 25%; left: 35%; }
+.register-hero__particle--p3 { top: 35%; left: 60%; }
+.register-hero__particle--p4 { top: 45%; left: 15%; }
+.register-hero__particle--p5 { top: 55%; left: 40%; }
+.register-hero__particle--p6 { top: 65%; left: 65%; }
+.register-hero__particle--p7 { top: 75%; left: 20%; }
+.register-hero__particle--p8 { top: 85%; left: 50%; }

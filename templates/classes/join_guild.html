@@ -18,23 +18,23 @@
     </div>
 
     <main class="student-layout__main">
-      <div style="max-width:28rem">
-        <h1 style="font-family:'Cinzel',serif;font-size:1.5rem;color:#e8e0f8;margin-bottom:0.5rem">Entrar em uma Turma</h1>
-        <p style="color:#8b7db8;font-size:0.875rem;margin-bottom:1.5rem">Peça o código da sua turma para seu professor e insira abaixo.</p>
+      <div class="join-guild__container">
+        <h1 class="join-guild__title">Entrar em uma Turma</h1>
+        <p class="join-guild__desc">Peça o código da sua turma para seu professor e insira abaixo.</p>
 
         {% if messages %}
           {% for message in messages %}
-            <div class="form-errors" style="margin-bottom:1rem;{% if message.tags == 'success' %}background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#86efac{% endif %}">{{ message }}</div>
+            <div class="form-errors{% if message.tags == 'success' %} form-errors--success{% endif %}">{{ message }}</div>
           {% endfor %}
         {% endif %}
 
-        <div style="background:#16112e;border:1px solid rgba(124,58,237,0.2);border-radius:0.75rem;padding:1.5rem">
+        <div class="join-guild__card">
           <form method="post">
             {% csrf_token %}
             <div class="form-group">
               <label class="form-group__label" for="code">Código da Turma</label>
               <div class="input-wrapper">
-                <input type="text" id="code" name="code" maxlength="16" required class="form-input" style="padding-left:0.75rem;font-family:'Courier New',monospace;letter-spacing:0.08em" placeholder="Ex: MAGIA-7A-2024">
+                <input type="text" id="code" name="code" maxlength="16" required class="form-input form-input--no-icon join-guild__code-input" placeholder="Ex: MAGIA-7A-2024">
               </div>
             </div>
             <button type="submit" class="btn-submit">
@@ -43,8 +43,8 @@
           </form>
         </div>
 
-        <nav style="margin-top:1rem">
-          <a href="{% url 'dashboard:student_dashboard' %}" style="font-size:0.8125rem;color:#8b7db8;text-decoration:none">← Voltar</a>
+        <nav class="join-guild__nav">
+          <a href="{% url 'dashboard:student_dashboard' %}" class="join-guild__nav-link">← Voltar</a>
         </nav>
       </div>
     </main>

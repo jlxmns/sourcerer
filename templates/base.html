@@ -14,6 +14,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body{% block body_class %}{% endblock %}>
+{% block header %}
     {% if user.is_authenticated and user.is_student %}
         {# Student pages handle their own header via {% include %} #}
     {% else %}
@@ -31,7 +32,7 @@
                     {% endif %}
                     <form method="post" action="{% url 'logout' %}" style="display:inline">
                         {% csrf_token %}
-                        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font:inherit;padding:0;text-decoration:underline">Sair</button>
+                        <button type="submit" class="btn-inline">Sair</button>
                     </form>
                 {% else %}
                     <a href="{% url 'login' %}">Entrar</a>
@@ -39,6 +40,7 @@
             </nav>
         </header>
     {% endif %}
+{% endblock %}
 
     <main>
         {% if messages %}
@@ -49,5 +51,6 @@
 
         {% block content %}{% endblock %}
     </main>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

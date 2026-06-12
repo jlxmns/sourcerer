@@ -24,7 +24,7 @@ def list_notifications(request):
     html_parts = []
     for n in notifications:
         html_parts.append(
-            f'<a href="{n.link_url}" class="notification-item" data-id="{n.pk}">'
+            f'<a href="{n.link_url}" class="notification-item" data-id="{n.pk}" onclick="event.preventDefault(); window.markNotificationRead(this)">'
             f"<strong>{n.title}</strong>"
             f"<span>{n.text}</span>"
             f"</a>"
