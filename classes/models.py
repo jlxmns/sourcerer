@@ -51,7 +51,7 @@ class Guild(models.Model):
         from accounts.models import StudentProfile
         return StudentProfile.objects.filter(
             guild_memberships__guild=self
-        ).order_by('-mana')
+        ).order_by('-mana', 'created_at')
 
     def __str__(self):
         return self.name

@@ -24,37 +24,78 @@
         Voltar ao Dashboard
       </a>
 
+      <!-- Guild selector dropdown -->
+      <div class="guild-selector" x-data="{ open: false }">
+        <button class="guild-selector__trigger"
+                @click="open = !open"
+                @keydown.escape="open = false"
+                aria-haspopup="true"
+                :aria-expanded="open">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>{{ guild.name }}</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="teacher-dropdown teacher-dropdown--left"
+             x-show="open"
+             @click.outside="open = false"
+             x-transition:enter="dropdown-enter"
+             x-transition:leave="dropdown-leave"
+             x-cloak>
+          {% for g in guilds %}
+            <a href="{% url 'dashboard:guild_detail' g.id %}"
+               class="teacher-dropdown__item{% if g.id == guild.id %} teacher-dropdown__item--active{% endif %}"
+               @click="open = false">
+              <span>{{ g.name }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
       <!-- Hero -->
       <div class="guild-hero">
         <div class="guild-hero__bg"></div>
         <div class="guild-hero__icon">⚔️</div>
 
         <div class="guild-hero__body">
-          <div class="guild-hero__top">
-            <h1 class="guild-hero__title">{{ guild.name }}</h1>
-            <span class="teacher-badge teacher-badge--cyan">{{ hero.student_count }} alunos</span>
-            <span class="teacher-badge teacher-badge--purple">Nível médio {{ hero.avg_level }}</span>
-          </div>
-          <p class="guild-hero__teacher">
-            Responsável: {{ hero.teacher_name }}{% if hero.school %} · {{ hero.school }}{% endif %}
-          </p>
-          <div class="guild-hero__stats">
-            <span class="guild-hero__stat guild-hero__stat--mana">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              <strong>{{ hero.total_mana }}</strong> mana total
-            </span>
-            <span class="guild-hero__stat guild-hero__stat--grim">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              <strong>{{ hero.total_grimoires }}</strong> grimórios
-            </span>
-            <span class="guild-hero__stat guild-hero__stat--spell">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <strong>{{ hero.total_spells }}</strong> feitiços
-            </span>
-            <span class="guild-hero__stat guild-hero__stat--prog">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
-              <strong>{{ hero.avg_progress }}%</strong> progresso médio
-            </span>
+          <div class="guild-hero__flex">
+            <div class="guild-hero__info">
+              <div class="guild-hero__top">
+                <h1 class="guild-hero__title">{{ guild.name }}</h1>
+                <span class="teacher-badge teacher-badge--cyan">{{ hero.student_count }} alunos</span>
+                <span class="teacher-badge teacher-badge--purple">Nível médio {{ hero.avg_level }}</span>
+              </div>
+              <p class="guild-hero__teacher">
+                Responsável: {{ hero.teacher_name }}{% if hero.school %} · {{ hero.school }}{% endif %}
+              </p>
+              <div class="guild-hero__stats">
+                <span class="guild-hero__stat guild-hero__stat--mana">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  <strong>{{ hero.total_mana }}</strong> mana total
+                </span>
+                <span class="guild-hero__stat guild-hero__stat--grim">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  <strong>{{ hero.total_grimoires }}</strong> grimórios
+                </span>
+                <span class="guild-hero__stat guild-hero__stat--spell">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <strong>{{ hero.total_spells }}</strong> feitiços
+                </span>
+                <span class="guild-hero__stat guild-hero__stat--prog">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+                  <strong>{{ hero.avg_progress }}%</strong> progresso médio
+                </span>
+              </div>
+            </div>
+            <div class="guild-hero__actions">
+              <a href="{% url 'dashboard:edit_guild' guild.pk %}" class="teacher-btn teacher-btn--sm teacher-btn--secondary">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Editar guilda
+              </a>
+              <a href="{% url 'dashboard:teacher_progress' %}?guild={{ guild.name }}" class="teacher-btn teacher-btn--sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                Ver progresso
+              </a>
+            </div>
           </div>
         </div>
       </div>

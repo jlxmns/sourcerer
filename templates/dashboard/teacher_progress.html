@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acompanhamento de Progresso{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/teacher.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="teacher-layout">
+  {% include 'components/teacher_sidebar.html' %}
+
+  <div class="teacher-main-area">
+    {% include 'components/teacher_header.html' %}
+
+    <main class="teacher-content">
+
+      <!-- Header -->
+      <div class="teacher-progress-header">
+        <h2 class="teacher-progress-header__title">Acompanhamento de Progresso</h2>
+        <p class="teacher-progress-header__sub">Visão detalhada de todos os alunos · {{ guilds|length }} guildas</p>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="teacher-progress-summary">
+        <div class="teacher-progress-summary__card teacher-progress-summary__card--green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <p class="teacher-progress-summary__value teacher-progress-summary__value--green">{{ avancando_count }}</p>
+            <p class="teacher-progress-summary__label">Avançando bem</p>
+          </div>
+        </div>
+        <div class="teacher-progress-summary__card teacher-progress-summary__card--gold">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <p class="teacher-progress-summary__value teacher-progress-summary__value--gold">{{ risco_count }}</p>
+            <p class="teacher-progress-summary__label">Em risco</p>
+          </div>
+        </div>
+        <div class="teacher-progress-summary__card teacher-progress-summary__card--gray">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b7db8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <div>
+            <p class="teacher-progress-summary__value teacher-progress-summary__value--gray">{{ inativo_count }}</p>
+            <p class="teacher-progress-summary__label">Sem atividade</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <form method="get" class="teacher-progress-filters">
+        <div class="teacher-progress-search">
+          <svg class="teacher-progress-search__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" name="search" value="{{ current_search }}" placeholder="Buscar aluno…" class="teacher-progress-search__input">
+        </div>
+
+        <div class="teacher-progress-filter-select">
+          <select name="guild" class="teacher-progress-filter-select__input">
+            <option value="">Guilda: Todas</option>
+            {% for name in guild_names %}
+              <option value="{{ name }}" {% if current_guild == name %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+          </select>
+          <svg class="teacher-progress-filter-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <div class="teacher-progress-filter-select">
+          <select name="status" class="teacher-progress-filter-select__input">
+            <option value="">Status: Todos</option>
+            <option value="Avançando" {% if current_status == 'Avançando' %}selected{% endif %}>Avançando</option>
+            <option value="Em risco" {% if current_status == 'Em risco' %}selected{% endif %}>Em risco</option>
+            <option value="Sem atividade" {% if current_status == 'Sem atividade' %}selected{% endif %}>Sem atividade</option>
+          </select>
+          <svg class="teacher-progress-filter-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <div class="teacher-progress-filter-select">
+          <select name="level" class="teacher-progress-filter-select__input">
+            <option value="">Nível: Todos</option>
+            <option value="1–3" {% if current_level == '1–3' %}selected{% endif %}>1–3</option>
+            <option value="4–6" {% if current_level == '4–6' %}selected{% endif %}>4–6</option>
+            <option value="7–9" {% if current_level == '7–9' %}selected{% endif %}>7–9</option>
+          </select>
+          <svg class="teacher-progress-filter-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        {% if filters_active %}
+          <a href="{% url 'dashboard:teacher_progress' %}" class="teacher-progress-filter-clear">Limpar filtros</a>
+        {% endif %}
+
+        <span class="teacher-progress-filter-count">{{ total_count }} aluno{{ total_count|pluralize }}</span>
+      </form>
+
+      <!-- Table -->
+      <div class="teacher-card teacher-progress-table-wrapper">
+        {% if students_data %}
+          <div class="teacher-progress-table" style="grid-template-columns:2fr 1fr 60px 80px 90px 90px 1fr 110px 110px">
+            <div class="teacher-progress-table__header">
+              <span>Aluno</span>
+              <span>Guilda</span>
+              <span>Nível</span>
+              <span>Mana</span>
+              <span>Grimórios</span>
+              <span>Feitiços</span>
+              <span>Progresso</span>
+              <span>Status</span>
+              <span>Últ. atividade</span>
+            </div>
+            {% for s in students_data %}
+              <div class="teacher-progress-table__row">
+                <div class="teacher-progress-table__cell teacher-progress-table__cell--name">
+                  <span class="teacher-table__avatar">{{ s.initial }}</span>
+                  <div class="teacher-progress-table__name-row">
+                    <span>{{ s.name }}</span>
+                    {% if s.tendency == 'up' %}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    {% elif s.tendency == 'down' %}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                    {% else %}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8b7db8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    {% endif %}
+                  </div>
+                </div>
+                <span class="teacher-progress-table__cell teacher-progress-table__cell--guild">{{ s.guild_name }}</span>
+                <span class="teacher-progress-table__cell teacher-progress-table__cell--num">{{ s.level }}</span>
+                <span class="teacher-progress-table__cell teacher-progress-table__cell--mana">{{ s.mana }}</span>
+                <span class="teacher-progress-table__cell teacher-progress-table__cell--num">{{ s.grimoires_completed }}/{{ s.total_grimoires }}</span>
+                <span class="teacher-progress-table__cell teacher-progress-table__cell--num">{{ s.spells_completed }}</span>
+                <div class="teacher-progress-table__cell teacher-progress-table__cell--bar">
+                  <div class="teacher-bar">
+                    <div class="teacher-bar__fill
+                      {% if s.progress >= 70 %}teacher-bar__fill--purple
+                      {% elif s.progress >= 40 %}teacher-bar__fill--gold
+                      {% else %}teacher-bar__fill--cyan{% endif %}"
+                      style="width:{{ s.progress }}%"></div>
+                  </div>
+                </div>
+                <div class="teacher-progress-table__cell">
+                  <span class="teacher-status-badge teacher-status-badge--{% if s.status == 'avancando' %}green{% elif s.status == 'risco' %}gold{% else %}red{% endif %}">
+                    {% if s.status == 'avancando' %}Avançando{% elif s.status == 'risco' %}Em risco{% else %}Sem atividade{% endif %}
+                  </span>
+                </div>
+                <span class="teacher-progress-table__cell teacher-progress-table__cell--activity
+                  {% if s.status == 'inativo' or s.days_inactive >= 8 %}teacher-progress-table__cell--activity-danger{% endif %}">
+                  {{ s.last_activity_label }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="teacher-empty">Nenhum aluno encontrado com esses filtros.</div>
+        {% endif %}
+      </div>
+
+    </main>
+  </div>
+</div>
+{% endblock %}

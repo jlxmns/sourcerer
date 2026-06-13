@@ -8,6 +8,7 @@ from accounts.forms import EmailAuthenticationForm
 from accounts import views
 
 urlpatterns = [
+    path("", views.home, name="home"),
     path("admin/", admin.site.urls),
     path(
         "login/",

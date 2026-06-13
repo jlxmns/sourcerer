@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Atenção necessária{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/teacher.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="teacher-layout">
+  {% include 'components/teacher_sidebar.html' %}
+
+  <div class="teacher-main-area">
+    {% include 'components/teacher_header.html' %}
+
+    <main class="teacher-content">
+
+      <a href="{% url 'dashboard:teacher_dashboard' %}" class="teacher-breadcrumb">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Voltar ao Dashboard
+      </a>
+
+      <div class="teacher-progress-header">
+        <h2 class="teacher-progress-header__title">Atenção necessária</h2>
+        <p class="teacher-progress-header__sub">{{ alerts_total }} aluno{{ alerts_total|pluralize }} precisando de atenção</p>
+      </div>
+
+      <!-- Filters + Table (wrapped for shared Alpine scope) -->
+      <div x-data="{ search: '', guildFilter: '' }">
+
+      <div class="teacher-progress-filters">
+        <div class="teacher-progress-search">
+          <svg class="teacher-progress-search__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" x-model="search" placeholder="Buscar aluno…" class="teacher-progress-search__input">
+        </div>
+
+        <div class="teacher-progress-filter-select">
+          <select x-model="guildFilter" class="teacher-progress-filter-select__input">
+            <option value="">Guilda: Todas</option>
+            {% for name in guild_names %}
+              <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+          <svg class="teacher-progress-filter-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <template x-if="search || guildFilter">
+          <a href="{% url 'dashboard:teacher_alerts' %}" class="teacher-progress-filter-clear">Limpar filtros</a>
+        </template>
+      </div>
+
+      <!-- Table -->
+      <div class="teacher-card">
+        {% if alerts %}
+          <div class="teacher-alerts-table">
+            <div class="teacher-alerts-table__header">
+              <span>Aluno</span>
+              <span>Guilda</span>
+              <span>Status</span>
+              <span>Mensagem</span>
+              <span>Inativo há</span>
+            </div>
+            {% for alert in alerts %}
+              <div class="teacher-alerts-table__row"
+                   data-name="{{ alert.student_name }}"
+                   data-guild="{{ alert.guild_name }}"
+                   x-show="(!search || search.length < 3 || $el.dataset.name.toLowerCase().includes(search.toLowerCase())) && (!guildFilter || $el.dataset.guild === guildFilter)">
+                <span class="teacher-alerts-table__cell teacher-alerts-table__cell--name">{{ alert.student_name }}</span>
+                <span class="teacher-alerts-table__cell teacher-alerts-table__cell--guild">{{ alert.guild_name }}</span>
+                <span class="teacher-alerts-table__cell teacher-alerts-table__cell--status">
+                  <span class="teacher-alert__dot teacher-alert__dot--{{ alert.type }}"></span>
+                  {% if alert.type == 'inativo' %}Sem atividade{% else %}Em risco{% endif %}
+                </span>
+                <span class="teacher-alerts-table__cell teacher-alerts-table__cell--msg">{{ alert.message }}</span>
+                <span class="teacher-alerts-table__cell teacher-alerts-table__cell--days">{{ alert.days_inactive }} dia{{ alert.days_inactive|pluralize }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="teacher-empty" style="padding:2rem">Todos os alunos estão em dia!</div>
+        {% endif %}
+      </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+{% endblock %}

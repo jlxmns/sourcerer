@@ -2,6 +2,10 @@
    Teacher Dashboard
    ============================================= */
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* =============================================
    Layout: sidebar + main area
    ============================================= */
@@ -312,6 +316,42 @@
   color: #fca5a5;
 }
 
+.teacher-dropdown__item--active {
+  background: rgba(124, 58, 237, 0.15);
+  color: #e8e0f8;
+  font-weight: 600;
+}
+
+.teacher-dropdown--left {
+  left: 0;
+  right: auto;
+}
+
+.guild-selector {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.25rem;
+}
+
+.guild-selector__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 0.5rem;
+  color: #c4b5fd;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.guild-selector__trigger:hover {
+  background: rgba(124, 58, 237, 0.2);
+}
+
 /* Content area */
 .teacher-content {
   flex: 1;
@@ -455,6 +495,17 @@
   box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
 }
 
+.teacher-btn--secondary {
+  background: #2d1f5e;
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+}
+
+.teacher-btn--secondary:hover {
+  background: #3d2a7a;
+  box-shadow: none;
+}
+
 /* Guild grid */
 .teacher-guild-grid {
   display: grid;
@@ -558,7 +609,7 @@
 }
 
 .teacher-guild-card__mana {
-  color: #d4a017;
+  color: #67e8f9;
 }
 
 /* Table */
@@ -795,6 +846,72 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
+.teacher-sidebar-card__footer {
+  border-top: 1px solid rgba(124, 58, 237, 0.1);
+  padding: 0.5rem 0.75rem;
+}
+
+.teacher-alerts-view-all {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #8b7db8;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: color 0.15s;
+}
+
+.teacher-alerts-view-all:hover {
+  color: #c4b5fd;
+}
+
+.teacher-alerts-table {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 100px 2fr 100px;
+}
+
+.teacher-alerts-table__header {
+  display: contents;
+}
+
+.teacher-alerts-table__header > span {
+  padding: 0.625rem 1rem;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a3d7a;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.teacher-alerts-table__row {
+  display: contents;
+}
+
+.teacher-alerts-table__row:hover .teacher-alerts-table__cell {
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.teacher-alerts-table__cell {
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.07);
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.teacher-alerts-table__cell--name {
+  color: #e8e0f8;
+}
+
+.teacher-alerts-table__cell--status {
+  gap: 0.375rem;
+}
+
 .teacher-action-btn {
   display: flex;
   align-items: center;
@@ -937,7 +1054,8 @@
   color: #8b7db8;
   text-decoration: none;
   font-family: 'Inter', system-ui, sans-serif;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  margin-right: 1rem;
   transition: color 0.15s;
 }
 
@@ -957,9 +1075,9 @@
 .teacher-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.125rem 0.5rem;
+  padding: 0.2rem 0.625rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -974,6 +1092,537 @@
   background: rgba(124, 58, 237, 0.12);
   color: #c4b5fd;
   border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+/* =============================================
+   Progress page
+   ============================================= */
+
+.teacher-progress-header {
+  margin-bottom: 1.25rem;
+}
+
+.teacher-progress-header__title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  margin: 0 0 0.15rem;
+}
+
+.teacher-progress-header__sub {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-progress-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.teacher-progress-summary__card {
+  border-radius: 0.75rem;
+  border: 1px solid;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.teacher-progress-summary__card--green {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.teacher-progress-summary__card--gold {
+  background: rgba(212, 160, 23, 0.08);
+  border-color: rgba(212, 160, 23, 0.2);
+}
+
+.teacher-progress-summary__card--gray {
+  background: rgba(139, 125, 184, 0.08);
+  border-color: rgba(139, 125, 184, 0.2);
+}
+
+.teacher-progress-summary__value {
+  font-family: 'Cinzel', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.teacher-progress-summary__value--green {
+  color: #22c55e;
+}
+
+.teacher-progress-summary__value--gold {
+  color: #d4a017;
+}
+
+.teacher-progress-summary__value--gray {
+  color: #8b7db8;
+}
+
+.teacher-progress-summary__label {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-progress-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.teacher-progress-search {
+  position: relative;
+}
+
+.teacher-progress-search__icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4a3d7a;
+  pointer-events: none;
+}
+
+.teacher-progress-search__input {
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem 0.5rem 2rem;
+  font-size: 0.8125rem;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 11rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.teacher-progress-search__input::placeholder {
+  color: #4a3d7a;
+}
+
+.teacher-progress-search__input:focus {
+  border-color: #7c3aed;
+}
+
+.teacher-progress-filter-select {
+  position: relative;
+}
+
+.teacher-progress-filter-select__input {
+  appearance: none;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.5rem;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #c4b5fd;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.teacher-progress-filter-select__input:focus {
+  border-color: #7c3aed;
+}
+
+.teacher-progress-filter-select__input option {
+  background: #16112e;
+}
+
+.teacher-progress-filter-select__chevron {
+  position: absolute;
+  right: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4a3d7a;
+  pointer-events: none;
+}
+
+.teacher-progress-filter-clear {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  text-decoration: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: color 0.15s;
+}
+
+.teacher-progress-filter-clear:hover {
+  color: #c4b5fd;
+}
+
+.teacher-progress-filter-count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-progress-table-wrapper {
+  overflow: hidden;
+}
+
+.teacher-progress-table {
+  display: grid;
+}
+
+.teacher-progress-table__header {
+  display: contents;
+}
+
+.teacher-progress-table__header > span {
+  padding: 0.625rem 1rem;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a3d7a;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+.teacher-progress-table__row {
+  display: contents;
+}
+
+.teacher-progress-table__row:hover .teacher-progress-table__cell {
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.teacher-progress-table__cell {
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.07);
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.teacher-progress-table__cell--name {
+  gap: 0.625rem;
+  color: #e8e0f8;
+}
+
+.teacher-progress-table__name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.teacher-progress-table__name-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teacher-progress-table__cell--guild {
+  color: #8b7db8;
+}
+
+.teacher-progress-table__cell--num {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #c4b5fd;
+  font-weight: 600;
+}
+
+.teacher-progress-table__cell--mana {
+  color: #67e8f9;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-progress-table__cell--bar {
+  padding-right: 0.75rem;
+}
+
+.teacher-progress-table__cell--activity-danger {
+  color: #f87171;
+}
+
+.teacher-status-badge {
+  display: inline-flex;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-status-badge--green {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+}
+
+.teacher-status-badge--gold {
+  background: rgba(212, 160, 23, 0.12);
+  color: #d4a017;
+}
+
+.teacher-status-badge--red {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+/* =============================================
+   Guild form
+   ============================================= */
+
+.guild-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-group__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.5rem;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.form-input::placeholder {
+  color: #4a3d7a;
+}
+
+.form-input:focus {
+  border-color: #7c3aed;
+}
+
+.field-hint {
+  font-size: 0.75rem;
+  color: #4a3d7a;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.form-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+  padding: 0.625rem 0.875rem;
+  background: #1e1540;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: 0.5rem;
+}
+
+.form-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-messages__item {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.form-messages__item--success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.form-messages__item--error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.teacher-search-select {
+  position: relative;
+}
+
+.teacher-search-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.5rem;
+  color: #c4b5fd;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.teacher-search-select__trigger:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+.teacher-search-select__dropdown {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  left: 0;
+  right: 0;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.teacher-search-select__search {
+  position: relative;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+.teacher-search-select__search input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2rem;
+  font-size: 0.8125rem;
+  background: #1e1540;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 0.375rem;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.teacher-search-select__search input:focus {
+  border-color: #7c3aed;
+}
+
+.teacher-search-select__search svg {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4a3d7a;
+  pointer-events: none;
+}
+
+.teacher-search-select__options {
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.teacher-search-select__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-size: 0.8125rem;
+  color: #c4b5fd;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.teacher-search-select__option:hover {
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.teacher-search-select__option--selected {
+  background: rgba(124, 58, 237, 0.12);
+  color: #e8e0f8;
+}
+
+.teacher-search-select__checkbox {
+  accent-color: #7c3aed;
+}
+
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.toggle-label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 2.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  background: #2d1f5e;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1rem;
+  height: 1rem;
+  background: #8b7db8;
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.toggle-label input:checked + .toggle-switch {
+  background: #7c3aed;
+}
+
+.toggle-label input:checked + .toggle-switch::after {
+  transform: translateX(1rem);
+  background: #e8e0f8;
+}
+
+.toggle-text {
+  font-size: 0.8125rem;
+  color: #e8e0f8;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 /* Hero card */
@@ -1066,6 +1715,25 @@
 
 .guild-hero__stat--prog {
   color: #86efac;
+}
+
+.guild-hero__flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.guild-hero__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.guild-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 /* Reusable card */
@@ -1345,4 +2013,42 @@
 
 .guild-table__cell--bar {
   padding-right: 0.75rem;
+}
+
+.teacher-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+}
+
+.teacher-pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #c4b5fd;
+  background: #16112e;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.teacher-pagination__btn:hover:not(:disabled) {
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.teacher-pagination__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.teacher-pagination__info {
+  font-size: 0.75rem;
+  color: #8b7db8;
+  font-family: 'Inter', system-ui, sans-serif;
 }

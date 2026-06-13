@@ -4,6 +4,7 @@ from django.db.models import Max, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
+import json
 
 from accounts.models import TeacherProfile, StudentProfile
 from classes.models import Guild, GuildMembership, GuildFoeProgress, PowerfulFoe
@@ -95,7 +96,6 @@ def teacher_dashboard(request):
         })
 
     students_data = []
-    alerts = []
 
     for student in all_students:
         membership = GuildMembership.objects.filter(
@@ -130,58 +130,101 @@ def teacher_dashboard(request):
             'has_completed_all': has_completed_all,
         })
 
-        if not has_completed_all:
-            if days_inactive >= 5:
-                alerts.append({
-                    'student_name': student.user.get_full_name() or student.user.username,
-                    'guild_name': membership.guild.name if membership else '—',
-                    'message': f'Sem atividade há {days_inactive} dias',
-                    'type': 'inativo',
-                    'days_inactive': days_inactive,
-                })
-            else:
-                alerts.append({
-                    'student_name': student.user.get_full_name() or student.user.username,
-                    'guild_name': membership.guild.name if membership else '—',
-                    'message': f'Progresso em {progress}% — faltam {total_grimoires - grimoires_completed} grimórios',
-                    'type': 'risco',
-                    'days_inactive': days_inactive,
-                })
+    alerts = _build_alerts(guilds, all_students, total_grimoires)
+
+    students_for_json = [{
+        'id': s['student'].pk,
+        'name': s['student'].user.get_full_name() or s['student'].user.username,
+        'initial': (s['student'].user.get_full_name() or s['student'].user.username)[0].upper(),
+        'guild': s['guild_name'],
+        'level': s['level'],
+        'mana': s['mana'],
+        'grimoires': s['grimoires_completed'],
+        'total_grimoires': s['total_grimoires'],
+        'spells': s['spells_completed'],
+        'progress': s['progress'],
+    } for s in students_data]
 
     context = {
         'teacher': teacher,
+        'guilds': guilds,
         'metrics': metrics,
         'guilds_data': guilds_data,
         'students_data': students_data,
-        'alerts': alerts,
+        'students_json': json.dumps(students_for_json, ensure_ascii=False),
+        'guild_names': [g.name for g in guilds],
+        'alerts': alerts[:10],
+        'alerts_total': len(alerts),
     }
     return render(request, 'dashboard/teacher_dashboard.html', context)
 
 
 @login_required
-def teacher_create_guild(request):
+def guild_form(request, guild_id=None):
     if not request.user.is_teacher():
         messages.error(request, 'Acesso restrito a professores.')
         return redirect('login')
 
+    teacher = request.user.teacher_profile
+
+    guilds = Guild.objects.filter(
+        Q(head_teacher=teacher) | Q(teachers=teacher),
+        is_active=True,
+    ).distinct()
+
+    if guild_id:
+        guild = get_object_or_404(
+            Guild.objects.filter(Q(head_teacher=teacher) | Q(teachers=teacher)),
+            pk=guild_id,
+        )
+    else:
+        guild = None
+
+    all_teachers = TeacherProfile.objects.select_related('user').exclude(pk=teacher.pk).order_by('user__first_name', 'user__username')
+
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
+        teacher_ids = request.POST.getlist('teachers')
+        is_active = request.POST.get('is_active') == 'on'
+
         if not name:
             messages.error(request, 'O nome da guilda é obrigatório.')
-            return redirect('dashboard:teacher_dashboard')
+        else:
+            if guild:
+                guild.name = name
+                guild.is_active = is_active
+                guild.save()
+                guild.teachers.set(teacher_ids)
+                messages.success(request, f'Guilda "{guild.name}" atualizada com sucesso!')
+                return redirect('dashboard:guild_detail', guild_id=guild.pk)
+            else:
+                guild = Guild.objects.create(
+                    name=name,
+                    head_teacher=teacher,
+                    is_active=is_active,
+                )
+                if teacher_ids:
+                    guild.teachers.set(teacher_ids)
+                for foe in PowerfulFoe.objects.all():
+                    GuildFoeProgress.objects.create(guild=guild, foe=foe)
+                messages.success(request, f'Guilda "{guild.name}" criada com sucesso!')
+                return redirect('dashboard:guild_detail', guild_id=guild.pk)
 
-        guild = Guild.objects.create(
-            name=name,
-            head_teacher=request.user.teacher_profile
-        )
+    selected_teacher_ids = list(guild.teachers.values_list('pk', flat=True)) if guild else []
 
-        for foe in PowerfulFoe.objects.all():
-            GuildFoeProgress.objects.create(guild=guild, foe=foe)
-
-        messages.success(request, f'Guilda "{guild.name}" criada com sucesso!')
-        return redirect('dashboard:guild_detail', guild_id=guild.pk)
-
-    return redirect('dashboard:teacher_dashboard')
+    context = {
+        'teacher': teacher,
+        'guilds': guilds,
+        'guild': guild,
+        'all_teachers': all_teachers,
+        'all_teachers_json': json.dumps([
+            {'id': t.pk, 'name': t.user.get_full_name() or t.user.username}
+            for t in all_teachers
+        ], ensure_ascii=False),
+        'selected_teacher_ids_json': json.dumps(selected_teacher_ids),
+        'is_edit': guild is not None,
+    }
+    return render(request, 'dashboard/guild_form.html', context)
 
 
 @login_required
@@ -235,7 +278,7 @@ def guild_detail(request, guild_id):
         'school': teacher.school,
     }
 
-    ranking = sorted(students_in_guild, key=lambda s: -s.mana)[:5]
+    ranking = sorted(students_in_guild, key=lambda s: (-s.mana, s.created_at))[:5]
     ranking_data = []
     for i, s in enumerate(ranking):
         ranking_data.append({
@@ -267,7 +310,7 @@ def guild_detail(request, guild_id):
         foe_mana_required = current_foe.foe.mana_required(student_count)
         foe_progress = min(100, int(guild_total_mana / foe_mana_required * 100)) if foe_mana_required > 0 else 0
 
-        recent = sorted(students_in_guild, key=lambda s: -s.mana)[:4]
+        recent = sorted(students_in_guild, key=lambda s: (-s.mana, s.created_at))[:5]
         recent_contributions = []
         for s in recent:
             recent_contributions.append({
@@ -287,15 +330,225 @@ def guild_detail(request, guild_id):
             'recent_contributions': recent_contributions,
         }
 
+    guilds = Guild.objects.filter(
+        Q(head_teacher=teacher) | Q(teachers=teacher),
+        is_active=True,
+    ).distinct()
+
     context = {
         'guild': guild,
         'teacher': teacher,
+        'guilds': guilds,
         'hero': hero,
         'ranking_data': ranking_data,
         'students_data': students_data,
         'foe_data': foe_data,
     }
     return render(request, 'dashboard/guild_detail.html', context)
+
+
+@login_required
+def teacher_progress(request):
+    if not request.user.is_teacher():
+        messages.error(request, 'Acesso restrito a professores.')
+        return redirect('login')
+
+    teacher = request.user.teacher_profile
+
+    guilds = Guild.objects.filter(
+        Q(head_teacher=teacher) | Q(teachers=teacher),
+        is_active=True,
+    ).distinct()
+
+    all_students = StudentProfile.objects.filter(
+        guild_memberships__guild__in=guilds
+    ).distinct()
+
+    total_grimoires = Grimoire.objects.count()
+    now = timezone.now()
+
+    guild_filter = request.GET.get('guild', '').strip()
+    status_filter = request.GET.get('status', '').strip()
+    level_filter = request.GET.get('level', '').strip()
+    search_query = request.GET.get('search', '').strip()
+
+    students_data = []
+    for student in all_students:
+        membership = GuildMembership.objects.filter(
+            student=student, guild__in=guilds
+        ).select_related('guild').first()
+
+        grimoires_completed = _count_grimoires_completed(student)
+        spells_completed = SpellCompletion.objects.filter(student=student).count()
+        progress = int(grimoires_completed / total_grimoires * 100) if total_grimoires > 0 else 0
+
+        last_completion = SpellCompletion.objects.filter(
+            student=student
+        ).aggregate(last=Max('created_at'))['last']
+
+        if last_completion:
+            days_inactive = (now.date() - last_completion.date()).days
+            if days_inactive == 0:
+                last_activity_label = "Hoje"
+            elif days_inactive == 1:
+                last_activity_label = "Ontem"
+            else:
+                last_activity_label = f"{days_inactive} dias"
+        else:
+            days_inactive = 999
+            last_activity_label = "Nunca"
+
+        if days_inactive >= 10:
+            status = 'inativo'
+        elif days_inactive >= 5:
+            status = 'risco'
+        else:
+            status = 'avancando'
+
+        if days_inactive <= 2:
+            tendency = 'up'
+        elif days_inactive <= 7:
+            tendency = 'flat'
+        else:
+            tendency = 'down'
+
+        guild_name = membership.guild.name if membership else '—'
+
+        if guild_filter and guild_name != guild_filter:
+            continue
+        if status_filter:
+            if status_filter == 'Avançando' and status != 'avancando':
+                continue
+            if status_filter == 'Em risco' and status != 'risco':
+                continue
+            if status_filter == 'Sem atividade' and status != 'inativo':
+                continue
+        if level_filter:
+            parts = level_filter.split('–')
+            lo, hi = int(parts[0]), int(parts[1])
+            if student.level < lo or student.level > hi:
+                continue
+        if search_query:
+            full_name = student.user.get_full_name() or student.user.username
+            if search_query.lower() not in full_name.lower():
+                continue
+
+        students_data.append({
+            'name': student.user.get_full_name() or student.user.username,
+            'initial': (student.user.get_full_name() or student.user.username)[0].upper(),
+            'guild_name': guild_name,
+            'level': student.level,
+            'mana': student.mana,
+            'grimoires_completed': grimoires_completed,
+            'total_grimoires': total_grimoires,
+            'spells_completed': spells_completed,
+            'progress': progress,
+            'status': status,
+            'tendency': tendency,
+            'days_inactive': days_inactive,
+            'last_activity_label': last_activity_label,
+        })
+
+    avancando_count = sum(1 for s in students_data if s['status'] == 'avancando')
+    risco_count = sum(1 for s in students_data if s['status'] == 'risco')
+    inativo_count = sum(1 for s in students_data if s['status'] == 'inativo')
+
+    filters_active = bool(guild_filter or status_filter or level_filter or search_query)
+
+    guild_names = [g.name for g in guilds]
+
+    context = {
+        'teacher': teacher,
+        'guilds': guilds,
+        'students_data': students_data,
+        'total_count': len(students_data),
+        'avancando_count': avancando_count,
+        'risco_count': risco_count,
+        'inativo_count': inativo_count,
+        'guild_names': guild_names,
+        'current_guild': guild_filter,
+        'current_status': status_filter,
+        'current_level': level_filter,
+        'current_search': search_query,
+        'filters_active': filters_active,
+    }
+    return render(request, 'dashboard/teacher_progress.html', context)
+
+
+@login_required
+def teacher_alerts(request):
+    if not request.user.is_teacher():
+        messages.error(request, 'Acesso restrito a professores.')
+        return redirect('login')
+
+    teacher = request.user.teacher_profile
+
+    guilds = Guild.objects.filter(
+        Q(head_teacher=teacher) | Q(teachers=teacher),
+        is_active=True,
+    ).distinct()
+
+    all_students = StudentProfile.objects.filter(
+        guild_memberships__guild__in=guilds
+    ).distinct()
+
+    total_grimoires = Grimoire.objects.count()
+    alerts = _build_alerts(guilds, all_students, total_grimoires)
+
+    guild_names = [g.name for g in guilds]
+
+    context = {
+        'teacher': teacher,
+        'guilds': guilds,
+        'alerts': alerts,
+        'alerts_total': len(alerts),
+        'guild_names': guild_names,
+    }
+    return render(request, 'dashboard/teacher_alerts.html', context)
+
+
+def _build_alerts(guilds, all_students, total_grimoires):
+    alerts = []
+
+    for student in all_students:
+        membership = GuildMembership.objects.filter(
+            student=student, guild__in=guilds
+        ).select_related('guild').first()
+
+        grimoires_completed = _count_grimoires_completed(student)
+        progress = int(grimoires_completed / total_grimoires * 100) if total_grimoires > 0 else 0
+
+        last_completion = SpellCompletion.objects.filter(
+            student=student
+        ).aggregate(last=Max('created_at'))['last']
+
+        if last_completion:
+            days_inactive = (timezone.now().date() - last_completion.date()).days
+        else:
+            days_inactive = 999
+
+        has_completed_all = grimoires_completed >= total_grimoires
+
+        if not has_completed_all:
+            guild_name = membership.guild.name if membership else '—'
+            if days_inactive >= 5:
+                alerts.append({
+                    'student_name': student.user.get_full_name() or student.user.username,
+                    'guild_name': guild_name,
+                    'message': f'Sem atividade há {days_inactive} dias',
+                    'type': 'inativo',
+                    'days_inactive': days_inactive,
+                })
+            else:
+                alerts.append({
+                    'student_name': student.user.get_full_name() or student.user.username,
+                    'guild_name': guild_name,
+                    'message': f'Progresso em {progress}% — faltam {total_grimoires - grimoires_completed} grimórios',
+                    'type': 'risco',
+                    'days_inactive': days_inactive,
+                })
+
+    return alerts
 
 
 def _count_grimoires_completed(student: StudentProfile) -> int:

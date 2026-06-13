@@ -22,6 +22,16 @@ def register(request):
     return render(request, "accounts/register.html", {"form": form})
 
 
+def home(request):
+    if request.user.is_authenticated:
+        if request.user.is_student():
+            return redirect("dashboard:student_dashboard")
+        elif request.user.is_teacher():
+            return redirect("dashboard:teacher_dashboard")
+        return redirect("admin:index")
+    return redirect("login")
+
+
 @login_required
 def login_redirect(request):
     if request.user.is_student():
