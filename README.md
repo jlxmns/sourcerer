@@ -1,8 +1,8 @@
 # Sourcerer
 
-Plataforma educacional gamificada para ensino de lógica de programação usando blocos visuais **Blockly**. Estudantes completam feitiços (exercícios) dentro de grimórios (capítulos), ganham mana (XP), sobem de nível, conquistam distintivos (badges) e colaboram em guildas (turmas) para derrotar poderosos inimigos.
+Plataforma educacional gamificada para ensino de lógica de programação usando blocos visuais **Blockly**. Estudantes completam feitiços (exercícios) dentro de grimórios (capítulos), ganham mana (XP), sobem de nível, conquistam distintivos (badges) e colaboram em guildas (turmas) para derrotar inimigos poderosos.
 
-Construída com Django, Blockly, HTMX e Alpine.js. Em Português (Brasil).
+Construída com Django, Blockly, HTMX e Alpine.js.
 
 ---
 
@@ -12,8 +12,8 @@ Construída com Django, Blockly, HTMX e Alpine.js. Em Português (Brasil).
 |--------|-----------|
 | Backend | Python 3.12+, Django 6.x |
 | Frontend | Django Templates, Blockly, HTMX, Alpine.js |
-| Banco de Dados | SQLite (desenvolvimento) |
-| Estilização | CSS customizado (estilo BEM) |
+| Banco de Dados | SQLite |
+| Estilização | CSS customizado (padrão BEM) |
 | Assets | Pillow, Lucide Icons |
 
 ---
@@ -26,7 +26,7 @@ Construída com Django, Blockly, HTMX e Alpine.js. Em Português (Brasil).
 | Exercício | **Feitiço** |
 | XP / Pontos | **Mana** |
 | Turma | **Guilda** |
-| Desafio de chefe | **Poderoso Inimigo** |
+| Desafio de chefe | **Inimigo Poderoso** |
 | Conquista | **Distintivo** |
 | Avatar / Skin | **Avatar** |
 

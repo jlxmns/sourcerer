@@ -2,3 +2,4 @@
 .env
 .opencode/
 figma_code/
+db.sqlite3
